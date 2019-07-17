@@ -33,73 +33,64 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
-    "version",
-    "name"
+    "job_input",
+    "recipe_input"
 })
-public class JobType implements Serializable {
+public class RecipeInput implements Serializable {
 
-    @JsonProperty("version")
-    private String version;
-    @JsonProperty("name")
-    private String name;
-    private final static long serialVersionUID = 3031949327948349133L;
+    @JsonProperty("job_input")
+    private String jobInput;
+    @JsonProperty("recipe_input")
+    private String recipeInput;
+    private final static long serialVersionUID = -4640730651844868374L;
 
-    /**
-     * No args constructor for use in serialization
-     *
-     */
-    public JobType() {
+    public RecipeInput() {
     }
 
-    /**
-     *
-     * @param name
-     * @param version
-     */
-    public JobType(String version, String name) {
+    public RecipeInput(String jobInput, String recipeInput) {
         super();
-        this.version = version;
-        this.name = name;
+        this.jobInput = jobInput;
+        this.recipeInput = recipeInput;
     }
 
-    @JsonProperty("version")
-    public String getVersion() {
-        return version;
+    @JsonProperty("job_input")
+    public String getJobInput() {
+        return jobInput;
     }
 
-    @JsonProperty("version")
-    public void setVersion(String version) {
-        this.version = version;
+    @JsonProperty("job_input")
+    public void setJobInput(String jobInput) {
+        this.jobInput = jobInput;
     }
 
-    public JobType withVersion(String version) {
-        this.version = version;
+    public RecipeInput withJobInput(String jobInput) {
+        this.jobInput = jobInput;
         return this;
     }
 
-    @JsonProperty("name")
-    public String getName() {
-        return name;
+    @JsonProperty("recipe_input")
+    public String getRecipeInput() {
+        return recipeInput;
     }
 
-    @JsonProperty("name")
-    public void setName(String name) {
-        this.name = name;
+    @JsonProperty("recipe_input")
+    public void setRecipeInput(String recipeInput) {
+        this.recipeInput = recipeInput;
     }
 
-    public JobType withName(String name) {
-        this.name = name;
+    public RecipeInput withRecipeInput(String recipeInput) {
+        this.recipeInput = recipeInput;
         return this;
     }
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("version", version).append("name", name).toString();
+        return new ToStringBuilder(this).append("jobInput", jobInput).append("recipeInput", recipeInput).toString();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(name).append(version).toHashCode();
+        return new HashCodeBuilder().append(recipeInput).append(jobInput).toHashCode();
     }
 
     @Override
@@ -107,11 +98,11 @@ public class JobType implements Serializable {
         if (other == this) {
             return true;
         }
-        if (other instanceof JobType == false) {
+        if (other instanceof RecipeInput == false) {
             return false;
         }
-        JobType rhs = (JobType) other;
-        return new EqualsBuilder().append(name, rhs.name).append(version, rhs.version).isEquals();
+        RecipeInput rhs = (RecipeInput) other;
+        return new EqualsBuilder().append(recipeInput, rhs.recipeInput).append(jobInput, rhs.jobInput).isEquals();
     }
 
 }

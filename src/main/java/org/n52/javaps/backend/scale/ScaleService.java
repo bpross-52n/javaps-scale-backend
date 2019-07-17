@@ -16,11 +16,13 @@
  */
 package org.n52.javaps.backend.scale;
 
-import org.n52.javaps.backend.scale.api.JobTypes;
+import org.n52.javaps.backend.scale.api.Recipe;
+import org.n52.javaps.backend.scale.api.Recipes;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
+import retrofit2.http.Path;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">J&uuml;rrens, Eike Hinderk</a>
@@ -29,7 +31,10 @@ import retrofit2.http.Header;
  */
 public interface ScaleService {
 
-    @GET("job-types/")
-    Call<JobTypes> getJobTypes(@Header("Cookie") String dcosAuthCookie);
+    @GET("recipes/")
+    Call<Recipes> getRecipes(@Header("Cookie") String dcosAuthCookie);
+
+    @GET("recipes/{id}/")
+    Call<Recipe> getRecipe(@Header("Cookie") String dcosAuthCookie, @Path("id") int id);
 
 }

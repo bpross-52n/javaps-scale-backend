@@ -21,7 +21,7 @@ import java.util.Set;
 
 import org.n52.javaps.backend.scale.ScaleAlgorithm;
 import org.n52.javaps.backend.scale.ScaleServiceController;
-import org.n52.javaps.backend.scale.api.JobType;
+import org.n52.javaps.backend.scale.api.Recipe;
 import org.n52.javaps.description.TypedProcessInputDescription;
 import org.n52.javaps.description.TypedProcessOutputDescription;
 import org.n52.shetland.ogc.ows.OwsCode;
@@ -31,53 +31,51 @@ import org.n52.shetland.ogc.ows.OwsMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.Sets;
-
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">J&uuml;rrens, Eike Hinderk</a>
  *
  * @since 1.4.0
  */
-public class JobTypeConverter {
+public class Converter {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(JobTypeConverter.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(Converter.class);
 
     private ScaleServiceController scaleService;
 
-    public JobTypeConverter(ScaleServiceController scaleService) {
+    public Converter(ScaleServiceController scaleService) {
         this.scaleService = scaleService;
     }
 
-    public ScaleAlgorithm convertToAlgorithm(JobType jt) {
-        LOGGER.trace("Converting JobType '{}' to ScaleAlgorithm", jt);
+    public ScaleAlgorithm convertToAlgorithm(Recipe recipe) {
+        LOGGER.trace("Converting Recipe '{}' to ScaleAlgorithm", recipe);
 
         OwsCode id = new OwsCode(String.format("%s-%s-v%s-r%s",
                 ScaleAlgorithm.PREFIX,
-                jt.getName(),
-                jt.getVersion(),
-                jt.getRevision_num()));
+                recipe.getRecipeType().getName(),
+                recipe.getRecipeType().getVersion(),
+                recipe.getRecipeTypeRev().getRevision()));
 
         // TODO better handling because of potential null values
 
-        OwsLanguageString title = new OwsLanguageString(jt.getTitle());
+        OwsLanguageString title = new OwsLanguageString(recipe.getRecipeType().getTitle());
         LOGGER.trace("Created title: '{}'", title);
 
-        OwsLanguageString abstrakt = new OwsLanguageString(jt.getDescription());
+        OwsLanguageString abstrakt = new OwsLanguageString(recipe.getRecipeType().getDescription());
         LOGGER.trace("Created abstrakt: '{}'", abstrakt);
 
-        Set<OwsKeyword> keywords = Sets.newHashSet(new OwsKeyword(jt.getCategory()));
-        LOGGER.trace("Created keywords: '{}'", keywords);
-
+        Set<OwsKeyword> keywords = Collections.emptySet();
         Set<OwsMetadata> metadata = Collections.emptySet();
 
         Set<TypedProcessInputDescription<?>> inputs = Collections.emptySet();
         Set<TypedProcessOutputDescription<?>> outputs = Collections.emptySet();
-        String version = jt.getVersion();
+        String version = String.format("v%s-r%s",
+                recipe.getRecipeType().getVersion(),
+                recipe.getRecipeTypeRev().getRevision());
         boolean storeSupported = true;
         boolean statusSupported = true;
 
         return new ScaleAlgorithm(scaleService,
-                jt.getId(),
+                recipe.getId(),
                 id,
                 title,
                 abstrakt,

@@ -19,16 +19,18 @@ package org.n52.javaps.backend.scale;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.security.auth.Destroyable;
 
 import org.n52.janmayen.lifecycle.Constructable;
-import org.n52.javaps.backend.scale.api.JobTypes;
-import org.n52.javaps.backend.scale.api.util.JobTypeConverter;
+import org.n52.javaps.backend.scale.api.Recipe;
+import org.n52.javaps.backend.scale.api.Recipes;
+import org.n52.javaps.backend.scale.api.ReferencedRecipe;
+import org.n52.javaps.backend.scale.api.util.Converter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,19 +55,38 @@ public class ScaleServiceController implements Constructable, Destroyable {
 
     private ScaleService scaleService;
 
-    private JobTypeConverter converter;
+    private Converter converter;
 
     public ScaleServiceController() {
         LOGGER.info("NEW {}", this);
     }
 
     public List<ScaleAlgorithm> getAlgorithms() throws IOException {
-        Call<JobTypes> call = scaleService.getJobTypes(getAuthCookieContent());
-        Response<JobTypes> response = call.execute();
+        Call<Recipes> call = scaleService.getRecipes(getAuthCookieContent());
+        Response<Recipes> response = call.execute();
+        List<ScaleAlgorithm> result = new LinkedList<>();
         if (response.isSuccessful()) {
-            return response.body().getResults().stream()
-                    .map(jt -> converter.convertToAlgorithm(jt))
-                    .collect(Collectors.toList());
+            Recipes recipes = response.body();
+            do {
+                for (ReferencedRecipe recipeReference : recipes.getResults()) {
+                    if (recipeReference.isIsSuperseded()) {
+                        continue;
+                    }
+                    Call<Recipe> recipeCall = scaleService.getRecipe(
+                            getAuthCookieContent(),
+                            recipeReference.getId());
+                    Response<Recipe> recipeResponse = recipeCall.execute();
+                    if (recipeResponse.isSuccessful()) {
+                        Recipe recipe = recipeResponse.body();
+                        result.add(converter.convertToAlgorithm(recipe));
+                    }
+                }
+            } while (recipes.getNext() != null);
+            if (result.isEmpty()) {
+                return Collections.emptyList();
+            } else {
+                return Collections.unmodifiableList(result);
+            }
         }
         LOGGER.error("Requesting job-types from scale web server failed!\n{}", response.errorBody());
         return Collections.emptyList();
@@ -90,7 +111,7 @@ public class ScaleServiceController implements Constructable, Destroyable {
                     .addConverterFactory(JacksonConverterFactory.create())
                     .build();
             scaleService = retrofit.create(ScaleService.class);
-            converter = new JobTypeConverter(this);
+            converter = new Converter(this);
         }
         LOGGER.info("INIT {}", this);
     }

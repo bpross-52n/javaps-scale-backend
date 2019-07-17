@@ -86,6 +86,7 @@ public class ScaleRepository implements AlgorithmRepository  {
     @Override
     public void init() {
         LOGGER.trace("START INIT {}", this);
+        // FIXME add lock to limit to one TimeTask at a time
         cacheTimer = new Timer("ScaleAlgorithmRepoUpdateTimer");
         cacheTimer.schedule(
                         new TimerTask() {

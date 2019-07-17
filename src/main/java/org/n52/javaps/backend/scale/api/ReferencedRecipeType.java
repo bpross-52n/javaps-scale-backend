@@ -33,73 +33,45 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
-    "version",
-    "name"
+    "id"
 })
-public class JobType implements Serializable {
+public class ReferencedRecipeType implements Serializable {
 
-    @JsonProperty("version")
-    private String version;
-    @JsonProperty("name")
-    private String name;
-    private final static long serialVersionUID = 3031949327948349133L;
+    @JsonProperty("id")
+    private long id;
+    private final static long serialVersionUID = -3584862031134077036L;
 
-    /**
-     * No args constructor for use in serialization
-     *
-     */
-    public JobType() {
+    public ReferencedRecipeType() {
     }
 
-    /**
-     *
-     * @param name
-     * @param version
-     */
-    public JobType(String version, String name) {
+    public ReferencedRecipeType(long id) {
         super();
-        this.version = version;
-        this.name = name;
+        this.id = id;
     }
 
-    @JsonProperty("version")
-    public String getVersion() {
-        return version;
+    @JsonProperty("id")
+    public long getId() {
+        return id;
     }
 
-    @JsonProperty("version")
-    public void setVersion(String version) {
-        this.version = version;
+    @JsonProperty("id")
+    public void setId(long id) {
+        this.id = id;
     }
 
-    public JobType withVersion(String version) {
-        this.version = version;
-        return this;
-    }
-
-    @JsonProperty("name")
-    public String getName() {
-        return name;
-    }
-
-    @JsonProperty("name")
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public JobType withName(String name) {
-        this.name = name;
+    public ReferencedRecipeType withId(long id) {
+        this.id = id;
         return this;
     }
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("version", version).append("name", name).toString();
+        return new ToStringBuilder(this).append("id", id).toString();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(name).append(version).toHashCode();
+        return new HashCodeBuilder().append(id).toHashCode();
     }
 
     @Override
@@ -107,11 +79,11 @@ public class JobType implements Serializable {
         if (other == this) {
             return true;
         }
-        if (other instanceof JobType == false) {
+        if (other instanceof ReferencedRecipeType == false) {
             return false;
         }
-        JobType rhs = (JobType) other;
-        return new EqualsBuilder().append(name, rhs.name).append(version, rhs.version).isEquals();
+        ReferencedRecipeType rhs = (ReferencedRecipeType) other;
+        return new EqualsBuilder().append(id, rhs.id).isEquals();
     }
 
 }

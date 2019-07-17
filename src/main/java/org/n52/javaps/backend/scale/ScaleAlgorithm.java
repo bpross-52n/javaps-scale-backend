@@ -37,6 +37,9 @@ import org.slf4j.LoggerFactory;
  *
  * @since 1.4.0
  *
+ * TODO configure for all: jobControlOptions only async-execute dismiss
+ * TODO configure for all: outputTransmission only reference
+ *
  */
 public class ScaleAlgorithm extends AbstractAlgorithm {
 

@@ -22,6 +22,7 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -33,73 +34,66 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
-    "version",
-    "name"
+    "id",
+    "is_superseded"
 })
-public class JobType implements Serializable {
+@JsonIgnoreProperties(ignoreUnknown=true)
+public class ReferencedRecipe implements Serializable {
 
-    @JsonProperty("version")
-    private String version;
-    @JsonProperty("name")
-    private String name;
-    private final static long serialVersionUID = 3031949327948349133L;
+    @JsonProperty("id")
+    private int id;
+    @JsonProperty("is_superseded")
+    private boolean isSuperseded;
 
-    /**
-     * No args constructor for use in serialization
-     *
-     */
-    public JobType() {
+    private final static long serialVersionUID = 1000474927307839313L;
+
+    public ReferencedRecipe() {
     }
 
-    /**
-     *
-     * @param name
-     * @param version
-     */
-    public JobType(String version, String name) {
+    public ReferencedRecipe(int id, boolean isSuperseded) {
         super();
-        this.version = version;
-        this.name = name;
+        this.id = id;
+        this.isSuperseded = isSuperseded;
     }
 
-    @JsonProperty("version")
-    public String getVersion() {
-        return version;
+    @JsonProperty("id")
+    public int getId() {
+        return id;
     }
 
-    @JsonProperty("version")
-    public void setVersion(String version) {
-        this.version = version;
+    @JsonProperty("id")
+    public void setId(int id) {
+        this.id = id;
     }
 
-    public JobType withVersion(String version) {
-        this.version = version;
+    public ReferencedRecipe withId(int id) {
+        this.id = id;
         return this;
     }
 
-    @JsonProperty("name")
-    public String getName() {
-        return name;
+     @JsonProperty("is_superseded")
+    public boolean isIsSuperseded() {
+        return isSuperseded;
     }
 
-    @JsonProperty("name")
-    public void setName(String name) {
-        this.name = name;
+    @JsonProperty("is_superseded")
+    public void setIsSuperseded(boolean isSuperseded) {
+        this.isSuperseded = isSuperseded;
     }
 
-    public JobType withName(String name) {
-        this.name = name;
+    public ReferencedRecipe withIsSuperseded(boolean isSuperseded) {
+        this.isSuperseded = isSuperseded;
         return this;
     }
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("version", version).append("name", name).toString();
+        return new ToStringBuilder(this).append("id", id).append("isSuperseded", isSuperseded).toString();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(name).append(version).toHashCode();
+        return new HashCodeBuilder().append(isSuperseded).append(id).toHashCode();
     }
 
     @Override
@@ -107,11 +101,11 @@ public class JobType implements Serializable {
         if (other == this) {
             return true;
         }
-        if (other instanceof JobType == false) {
+        if (other instanceof ReferencedRecipe == false) {
             return false;
         }
-        JobType rhs = (JobType) other;
-        return new EqualsBuilder().append(name, rhs.name).append(version, rhs.version).isEquals();
+        ReferencedRecipe rhs = (ReferencedRecipe) other;
+        return new EqualsBuilder().append(isSuperseded, rhs.isSuperseded).append(id, rhs.id).isEquals();
     }
 
 }

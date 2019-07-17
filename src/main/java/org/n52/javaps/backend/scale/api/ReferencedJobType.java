@@ -33,48 +33,24 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
-    "version",
-    "name"
+    "name",
+    "version"
 })
-public class JobType implements Serializable {
+public class ReferencedJobType implements Serializable {
 
-    @JsonProperty("version")
-    private String version;
     @JsonProperty("name")
     private String name;
+    @JsonProperty("version")
+    private String version;
     private final static long serialVersionUID = 3031949327948349133L;
 
-    /**
-     * No args constructor for use in serialization
-     *
-     */
-    public JobType() {
+    public ReferencedJobType() {
     }
 
-    /**
-     *
-     * @param name
-     * @param version
-     */
-    public JobType(String version, String name) {
+    public ReferencedJobType(String name, String version) {
         super();
-        this.version = version;
         this.name = name;
-    }
-
-    @JsonProperty("version")
-    public String getVersion() {
-        return version;
-    }
-
-    @JsonProperty("version")
-    public void setVersion(String version) {
         this.version = version;
-    }
-
-    public JobType withVersion(String version) {
-        this.version = version;
-        return this;
     }
 
     @JsonProperty("name")
@@ -87,14 +63,29 @@ public class JobType implements Serializable {
         this.name = name;
     }
 
-    public JobType withName(String name) {
+    public ReferencedJobType withName(String name) {
         this.name = name;
+        return this;
+    }
+
+    @JsonProperty("version")
+    public String getVersion() {
+        return version;
+    }
+
+    @JsonProperty("version")
+    public void setVersion(String version) {
+        this.version = version;
+    }
+
+    public ReferencedJobType withVersion(String version) {
+        this.version = version;
         return this;
     }
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("version", version).append("name", name).toString();
+        return new ToStringBuilder(this).append("name", name).append("version", version).toString();
     }
 
     @Override
@@ -107,10 +98,10 @@ public class JobType implements Serializable {
         if (other == this) {
             return true;
         }
-        if (other instanceof JobType == false) {
+        if (other instanceof ReferencedJobType == false) {
             return false;
         }
-        JobType rhs = (JobType) other;
+        ReferencedJobType rhs = (ReferencedJobType) other;
         return new EqualsBuilder().append(name, rhs.name).append(version, rhs.version).isEquals();
     }
 
