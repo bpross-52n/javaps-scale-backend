@@ -7,7 +7,7 @@ This repository provides a backend for the [Scale Data Center](https://ngageoint
 ## License
 
 - Apache v2.0 (see [LICENSE](LICENSE))
-- see NOTICE for used libraries
+- see [NOTICE](NOTICE) for used libraries
 
 
 ## Contact

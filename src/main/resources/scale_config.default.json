@@ -1,0 +1,10 @@
+{
+    "scale_dcos_host"                                    : "https://dcos-host.example.com/",
+    "scale_auth_contextpath"                             : "acs/api/v1/auth/login",
+    "scale_auth_token_lifetime"                          : 570,
+	"scale_webserver_contextpath"                        : "service/scale/api/v5/",
+	"scale_jwt_auth_token"                               : "jwt-token-not-specified",
+    "scale_info_cookie"                                  : "info-cookie-not-specified",
+    "scale_algorithm_cache_update_startup_delay_seconds" : 5,
+    "scale_algorithm_cache_update_period_in_minutes"     : 5
+}
