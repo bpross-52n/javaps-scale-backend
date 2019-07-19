@@ -16,13 +16,9 @@
  */
 package org.n52.javaps.backend.scale;
 
-import java.io.IOException;
-import java.time.ZonedDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 import java.util.Set;
 import java.util.Timer;
-import java.util.TimerTask;
 
 import javax.inject.Inject;
 
@@ -88,26 +84,7 @@ public class ScaleRepository implements AlgorithmRepository  {
         LOGGER.trace("START INIT {}", this);
         // FIXME add lock to limit to one TimeTask at a time
         cacheTimer = new Timer("ScaleAlgorithmRepoUpdateTimer");
-        cacheTimer.schedule(
-                        new TimerTask() {
-
-                            @Override
-                            public void run() {
-                                LOGGER.trace("START UPDATE CACHE");
-                                try {
-                                    cache.addAlgorithms(scaleService.getAlgorithms());
-                                } catch (IOException e) {
-                                    LOGGER.error("Could not get algorithms from scale web service: {}",
-                                            e.getMessage());
-                                    LOGGER.debug("Stackstrace:", e);
-                                    // FIXME should we fail totally here because this will cause the beans fail which can break javaPS
-                                }
-                                LOGGER.info("UPDATED CACHE - next run at {}",
-                                        ZonedDateTime.now().plus(
-                                                config.getAlgorithmCacheUpdatePeriodInMinutes(),
-                                                ChronoUnit.MINUTES));
-                            }
-                        },
+        cacheTimer.schedule(new CacheUpdateTask(cache, scaleService, config),
                         config.getAlgorithmCacheUpdateStartUpDelaySeconds() * 1000,
                         config.getAlgorithmCacheUpdatePeriodInMinutes() * 1000 * 60L);
         LOGGER.info("INIT {}", this);
