@@ -36,9 +36,9 @@ import com.fasterxml.jackson.databind.JsonNode;
  *
  */
 @Properties(defaultPropertyFileName="scale_config.default.json", propertyFileName="scale_config.json")
-public class ScaleConfig implements ConfigurableClass {
+public class ScaleConfiguration implements ConfigurableClass {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ScaleConfig.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ScaleConfiguration.class);
 
     private static final String SCALE_DCOS_HOST = "scale_dcos_host";
     private static final String SCALE_AUTH_CONTEXTPATH = "scale_auth_contextpath";
@@ -63,7 +63,7 @@ public class ScaleConfig implements ConfigurableClass {
 
 
 
-    public ScaleConfig() {
+    public ScaleConfiguration() {
         JsonNode properties = getProperties();
         if (properties == null) {
             String message = String.format("Could not parse properties for class '%s'",

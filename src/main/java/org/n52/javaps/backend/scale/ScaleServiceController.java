@@ -49,7 +49,7 @@ public class ScaleServiceController implements Constructable, Destroyable {
     private static final Logger LOGGER = LoggerFactory.getLogger(ScaleServiceController.class);
 
     @Inject
-    private ScaleConfig configuration;
+    private ScaleConfiguration configuration;
 
     private Retrofit retrofit;
 

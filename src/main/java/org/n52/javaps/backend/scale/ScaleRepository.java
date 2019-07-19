@@ -57,7 +57,7 @@ public class ScaleRepository implements AlgorithmRepository  {
     private ScaleRepositoryCache cache;
 
     @Inject
-    private ScaleConfig config;
+    private ScaleConfiguration config;
 
     public ScaleRepository() {
         LOGGER.info("NEW {}", this);
