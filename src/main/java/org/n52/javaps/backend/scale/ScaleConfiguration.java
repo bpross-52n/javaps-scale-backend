@@ -41,27 +41,40 @@ public class ScaleConfiguration implements ConfigurableClass {
     private static final Logger LOGGER = LoggerFactory.getLogger(ScaleConfiguration.class);
 
     private static final String SCALE_DCOS_HOST = "scale_dcos_host";
+
     private static final String SCALE_AUTH_CONTEXTPATH = "scale_auth_contextpath";
+
     private static final String SCALE_AUTH_TOKEN_LIFETIME = "scale_auth_token_lifetime";
+
     private static final String SCALE_WEBSERVER_CONTEXTPATH = "scale_webserver_contextpath";
+
     private static final String SCALE_JWT_AUTH_TOKEN = "scale_jwt_auth_token";
+
     private static final String SCALE_INFO_COOKIE = "scale_info_cookie";
+
     private static final String SCALE_ALGORITHM_CACHE_UPDATE_STARTUP_DELAY_SECONDS =
             "scale_algorithm_cache_update_startup_delay_seconds";
+
     private static final String SCALE_ALGORITHM_CACHE_UPDATE_PERIOD_IN_MINUTES =
             "scale_algorithm_cache_update_period_in_minutes";
 
+    private static final String SCALE_WAITING_SLEEP_IN_SECONDS = "scale_waiting_sleep_in_seconds";
 
     private Optional<URL> scaleAuthEndpoint;
+
     private Optional<Integer> scaleAuthTokenLifeTime;
+
     private Optional<URL> scaleWebserverEndpoint;
+
     private Optional<String> scaleJwtAuthToken;
+
     private Optional<String> scaleInfoCookie;
+
     private int scaleAlgorithmCacheUpdateStartUpDelaySeconds;
+
     private int scaleAlgorithmCacheUpdatePeriodInMinutes;
 
-
-
+    private int scaleWaitingSleepInSeconds;
 
     public ScaleConfiguration() {
         JsonNode properties = getProperties();
@@ -81,6 +94,8 @@ public class ScaleConfiguration implements ConfigurableClass {
                     properties.get(SCALE_ALGORITHM_CACHE_UPDATE_STARTUP_DELAY_SECONDS).asInt(0);
             scaleAlgorithmCacheUpdatePeriodInMinutes =
                     properties.get(SCALE_ALGORITHM_CACHE_UPDATE_PERIOD_IN_MINUTES).asInt(5);
+            scaleWaitingSleepInSeconds =
+                    properties.get(SCALE_WAITING_SLEEP_IN_SECONDS).asInt(5);
         }
         LOGGER.info("NEW {}", this);
     }
@@ -103,15 +118,15 @@ public class ScaleConfiguration implements ConfigurableClass {
         }
     }
 
-    public Optional<URL> getScaleAuthEndpoint() {
+    public Optional<URL> getAuthEndpoint() {
         return scaleAuthEndpoint;
     }
 
-    public Optional<URL> getScaleWebserverEndpoint() {
+    public Optional<URL> getWebserverEndpoint() {
         return scaleWebserverEndpoint;
     }
 
-    public Optional<Integer> getScaleAuthTokenLifeTime() {
+    public Optional<Integer> getAuthTokenLifeTime() {
         return scaleAuthTokenLifeTime;
     }
 
@@ -129,6 +144,10 @@ public class ScaleConfiguration implements ConfigurableClass {
 
     public int getAlgorithmCacheUpdatePeriodInMinutes() {
         return scaleAlgorithmCacheUpdatePeriodInMinutes;
+    }
+
+    public int getWaitingSleepInSeconds() {
+        return scaleWaitingSleepInSeconds;
     }
 
 }

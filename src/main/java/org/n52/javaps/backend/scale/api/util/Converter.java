@@ -16,18 +16,32 @@
  */
 package org.n52.javaps.backend.scale.api.util;
 
+import java.math.BigInteger;
 import java.util.Collections;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.n52.javaps.backend.scale.ScaleAlgorithm;
 import org.n52.javaps.backend.scale.ScaleServiceController;
-import org.n52.javaps.backend.scale.api.Recipe;
+import org.n52.javaps.backend.scale.api.InputDatum;
+import org.n52.javaps.backend.scale.api.InputDatumFile;
+import org.n52.javaps.backend.scale.api.RecipeType;
 import org.n52.javaps.description.TypedProcessInputDescription;
 import org.n52.javaps.description.TypedProcessOutputDescription;
+import org.n52.javaps.description.impl.TypedComplexInputDescriptionImpl;
+import org.n52.javaps.description.impl.TypedLiteralInputDescriptionImpl;
+import org.n52.javaps.io.data.binding.complex.GenericFileDataBinding;
+import org.n52.javaps.io.literal.xsd.LiteralStringType;
+import org.n52.shetland.ogc.ows.OwsAnyValue;
 import org.n52.shetland.ogc.ows.OwsCode;
+import org.n52.shetland.ogc.ows.OwsDomainMetadata;
 import org.n52.shetland.ogc.ows.OwsKeyword;
 import org.n52.shetland.ogc.ows.OwsLanguageString;
 import org.n52.shetland.ogc.ows.OwsMetadata;
+import org.n52.shetland.ogc.wps.Format;
+import org.n52.shetland.ogc.wps.InputOccurence;
+import org.n52.shetland.ogc.wps.description.impl.LiteralDataDomainImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,36 +60,36 @@ public class Converter {
         this.scaleService = scaleService;
     }
 
-    public ScaleAlgorithm convertToAlgorithm(Recipe recipe) {
-        LOGGER.trace("Converting Recipe '{}' to ScaleAlgorithm", recipe);
+    public ScaleAlgorithm convertToAlgorithm(RecipeType recipeType) {
+        LOGGER.trace("Converting Recipe '{}' to ScaleAlgorithm", recipeType);
 
-        OwsCode id = new OwsCode(String.format("%s-%s-v%s-r%s",
+        OwsCode id = new OwsCode(String.format("%s-%s-%s-r%s",
                 ScaleAlgorithm.PREFIX,
-                recipe.getRecipeType().getName(),
-                recipe.getRecipeType().getVersion(),
-                recipe.getRecipeTypeRev().getRevision()));
+                recipeType.getName(),
+                recipeType.getVersion(),
+                recipeType.getRevision()));
 
         // TODO better handling because of potential null values
 
-        OwsLanguageString title = new OwsLanguageString(recipe.getRecipeType().getTitle());
+        OwsLanguageString title = new OwsLanguageString(recipeType.getTitle());
         LOGGER.trace("Created title: '{}'", title);
 
-        OwsLanguageString abstrakt = new OwsLanguageString(recipe.getRecipeType().getDescription());
+        OwsLanguageString abstrakt = new OwsLanguageString(recipeType.getDescription());
         LOGGER.trace("Created abstrakt: '{}'", abstrakt);
 
         Set<OwsKeyword> keywords = Collections.emptySet();
         Set<OwsMetadata> metadata = Collections.emptySet();
 
-        Set<TypedProcessInputDescription<?>> inputs = Collections.emptySet();
+        Set<TypedProcessInputDescription<?>> inputs = convertToInputDescriptions(recipeType.getDefinition().getInputData());
         Set<TypedProcessOutputDescription<?>> outputs = Collections.emptySet();
-        String version = String.format("v%s-r%s",
-                recipe.getRecipeType().getVersion(),
-                recipe.getRecipeTypeRev().getRevision());
+        String version = String.format("%s-r%s",
+                recipeType.getVersion(),
+                recipeType.getRevision());
         boolean storeSupported = true;
         boolean statusSupported = true;
 
         return new ScaleAlgorithm(scaleService,
-                recipe.getId(),
+                recipeType.getId(),
                 id,
                 title,
                 abstrakt,
@@ -86,6 +100,54 @@ public class Converter {
                 version,
                 storeSupported,
                 statusSupported);
+    }
+
+    public Set<TypedProcessInputDescription<?>> convertToInputDescriptions(List<InputDatum> inputData) {
+        if (inputData == null || inputData.isEmpty()) {
+            return Collections.emptySet();
+        }
+        return inputData.stream().map(this::convertToInputDescription).collect(Collectors.toSet());
+    }
+
+    public TypedProcessInputDescription<?> convertToInputDescription(InputDatum inputData) {
+        OwsCode id = new OwsCode(inputData.getName());
+        OwsLanguageString title = new OwsLanguageString(inputData.getName());
+        OwsLanguageString abstrakt = title;
+        Set<OwsKeyword> keywords = Collections.emptySet();
+        Set<OwsMetadata> metadata = Collections.emptySet();
+        InputOccurence occurence = new InputOccurence(BigInteger.valueOf(1), BigInteger.valueOf(1));
+        switch (inputData.getClass().getSimpleName()) {
+            case "InputDatumProperty":
+            default:
+                // FIXME switch to builder pattern
+                return new TypedLiteralInputDescriptionImpl(
+                        id,
+                        title,
+                        abstrakt,
+                        keywords,
+                        metadata,
+                        occurence,
+                        new LiteralDataDomainImpl(OwsAnyValue.instance(),
+                                // datatype
+                                null,
+                                new OwsDomainMetadata(" "),
+                                // default value
+                                null),
+                        Collections.emptySet(),
+                        new LiteralStringType());
+            case "InputDatumFile":
+                BigInteger maximumMegabytes = BigInteger.ZERO;
+                Set<Format> supportedFormats = ((InputDatumFile) inputData).getMediaTypes().stream()
+                        .map(m -> {
+                            return new Format(m);
+                        })
+                        .collect(Collectors.toSet());
+                Format defaultFormat = supportedFormats.iterator().next();
+                // FIXME switch to builder pattern
+                return new TypedComplexInputDescriptionImpl(id,
+                        title, abstrakt, keywords, metadata, occurence, defaultFormat, supportedFormats,
+                        maximumMegabytes, GenericFileDataBinding.class);
+        }
     }
 
 }

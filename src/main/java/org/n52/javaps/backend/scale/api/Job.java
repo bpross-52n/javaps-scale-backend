@@ -17,13 +17,14 @@
 package org.n52.javaps.backend.scale.api;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -35,102 +36,59 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
-    "dependencies",
-    "job_type",
-    "name",
-    "recipe_inputs"
+    "status"
 })
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Job implements Serializable {
 
-    @JsonProperty("dependencies")
-    private List<Object> dependencies = new ArrayList<>();
-    @JsonProperty("job_type")
-    private JobType jobType;
-    @JsonProperty("name")
-    private String name;
-    @JsonProperty("recipe_inputs")
-    private List<RecipeInput> recipeInputs = new ArrayList<>();
+    public enum Status {
+        BLOCKED,
+        COMPLETED,
+        PENDING,
+        FAILED,
+    }
+
+    @JsonProperty("status")
+    private String status;
+
+    @JsonIgnore
     private final static long serialVersionUID = 5414953060204559319L;
 
     public Job() {
     }
 
-    public Job(List<Object> dependencies, JobType jobType, String name, List<RecipeInput> recipeInputs) {
+    public Job(List<Object> dependencies, String status) {
         super();
-        this.dependencies = dependencies;
-        this.jobType = jobType;
-        this.name = name;
-        this.recipeInputs = recipeInputs;
+        this.status = status;
     }
 
-    @JsonProperty("dependencies")
-    public List<Object> getDependencies() {
-        return dependencies;
+    @JsonProperty("status")
+    public String getStatus() {
+        return status;
     }
 
-    @JsonProperty("dependencies")
-    public void setDependencies(List<Object> dependencies) {
-        this.dependencies = dependencies;
+    @JsonProperty("status")
+    public void setStatus(String status) {
+        this.status = status;
     }
 
-    public Job withDependencies(List<Object> dependencies) {
-        this.dependencies = dependencies;
-        return this;
-    }
-
-    @JsonProperty("job_type")
-    public JobType getJobType() {
-        return jobType;
-    }
-
-    @JsonProperty("job_type")
-    public void setJobType(JobType jobType) {
-        this.jobType = jobType;
-    }
-
-    public Job withJobType(JobType jobType) {
-        this.jobType = jobType;
-        return this;
-    }
-
-    @JsonProperty("name")
-    public String getName() {
-        return name;
-    }
-
-    @JsonProperty("name")
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Job withName(String name) {
-        this.name = name;
-        return this;
-    }
-
-    @JsonProperty("recipe_inputs")
-    public List<RecipeInput> getRecipeInputs() {
-        return recipeInputs;
-    }
-
-    @JsonProperty("recipe_inputs")
-    public void setRecipeInputs(List<RecipeInput> recipeInputs) {
-        this.recipeInputs = recipeInputs;
-    }
-
-    public Job withRecipeInputs(List<RecipeInput> recipeInputs) {
-        this.recipeInputs = recipeInputs;
+    public Job withStatus(String status) {
+        this.status = status;
         return this;
     }
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("dependencies", dependencies).append("jobType", jobType).append("name", name).append("recipeInputs", recipeInputs).toString();
+        return new ToStringBuilder(this)
+                .append("status", status)
+                .toString();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(jobType).append(dependencies).append(recipeInputs).append(name).toHashCode();
+        return new HashCodeBuilder()
+                .append(status)
+                .toHashCode();
     }
 
     @Override
@@ -142,7 +100,9 @@ public class Job implements Serializable {
             return false;
         }
         Job rhs = (Job) other;
-        return new EqualsBuilder().append(jobType, rhs.jobType).append(dependencies, rhs.dependencies).append(recipeInputs, rhs.recipeInputs).append(name, rhs.name).isEquals();
+        return new EqualsBuilder()
+                .append(status, rhs.status)
+                .isEquals();
     }
 
 }

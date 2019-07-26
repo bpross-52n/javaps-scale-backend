@@ -17,6 +17,7 @@
 package org.n52.javaps.backend.scale.api;
 
 import java.io.Serializable;
+import java.util.List;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
@@ -37,36 +38,44 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 @JsonPropertyOrder({
     "id",
     "recipe_type",
-    "recipe_type_rev",
     "created",
-    "last_modified"
+    "completed",
+    "last_modified",
+    "jobs"
 })
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Recipe implements Serializable {
 
     @JsonProperty("id")
     private int id;
+
     @JsonProperty("recipe_type")
     private RecipeType recipeType;
-    @JsonProperty("recipe_type_rev")
-    private RecipeTypeRev recipeTypeRev;
+
     @JsonProperty("created")
     private String created;
+
+    @JsonProperty("completed")
+    private String completed;
+
     @JsonProperty("last_modified")
     private String lastModified;
-    @JsonIgnore
 
+    @JsonProperty("jobs")
+    private List<Jobs> jobs;
+
+    @JsonIgnore
     private final static long serialVersionUID = 3110533031488141475L;
 
     public Recipe() {
     }
 
-    public Recipe(int id, RecipeType recipeType, RecipeTypeRev recipeTypeRev, String created, String lastModified) {
+    public Recipe(int id, RecipeType recipeType, String created, String completed, String lastModified) {
         super();
         this.id = id;
         this.recipeType = recipeType;
-        this.recipeTypeRev = recipeTypeRev;
         this.created = created;
+        this.completed = completed;
         this.lastModified = lastModified;
     }
 
@@ -100,21 +109,6 @@ public class Recipe implements Serializable {
         return this;
     }
 
-    @JsonProperty("recipe_type_rev")
-    public RecipeTypeRev getRecipeTypeRev() {
-        return recipeTypeRev;
-    }
-
-    @JsonProperty("recipe_type_rev")
-    public void setRecipeTypeRev(RecipeTypeRev recipeTypeRev) {
-        this.recipeTypeRev = recipeTypeRev;
-    }
-
-    public Recipe withRecipeTypeRev(RecipeTypeRev recipeTypeRev) {
-        this.recipeTypeRev = recipeTypeRev;
-        return this;
-    }
-
     @JsonProperty("created")
     public String getCreated() {
         return created;
@@ -127,6 +121,21 @@ public class Recipe implements Serializable {
 
     public Recipe withCreated(String created) {
         this.created = created;
+        return this;
+    }
+
+    @JsonProperty("completed")
+    public String getCompleted() {
+        return completed;
+    }
+
+    @JsonProperty("completed")
+    public void setCompleted(String completed) {
+        this.completed = completed;
+    }
+
+    public Recipe withCompleted(String completed) {
+        this.completed = completed;
         return this;
     }
 
@@ -145,14 +154,43 @@ public class Recipe implements Serializable {
         return this;
     }
 
+    @JsonProperty("jobs")
+    public List<Jobs> getJobs() {
+        return jobs;
+    }
+
+    @JsonProperty("jobs")
+    public void setJobs(List<Jobs> jobs) {
+        this.jobs = jobs;
+    }
+
+    public Recipe withJobs(List<Jobs> jobs) {
+        this.jobs = jobs;
+        return this;
+    }
+
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("id", id).append("recipeType", recipeType).append("recipeTypeRev", recipeTypeRev).append("created", created).append("lastModified", lastModified).toString();
+        return new ToStringBuilder(this)
+                .append("id", id)
+                .append("recipeType", recipeType)
+                .append("created", created)
+                .append("completed", completed)
+                .append("lastModified", lastModified)
+                .append("jobs", jobs)
+                .toString();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(recipeType).append(id).append(lastModified).append(created).append(recipeTypeRev).toHashCode();
+        return new HashCodeBuilder()
+                .append(recipeType)
+                .append(id)
+                .append(lastModified)
+                .append(created)
+                .append(completed)
+                .append(jobs)
+                .toHashCode();
     }
 
     @Override
@@ -164,7 +202,14 @@ public class Recipe implements Serializable {
             return false;
         }
         Recipe rhs = (Recipe) other;
-        return new EqualsBuilder().append(recipeType, rhs.recipeType).append(id, rhs.id).append(lastModified, rhs.lastModified).append(created, rhs.created).append(recipeTypeRev, rhs.recipeTypeRev).isEquals();
+        return new EqualsBuilder()
+                .append(recipeType, rhs.recipeType)
+                .append(id, rhs.id)
+                .append(lastModified, rhs.lastModified)
+                .append(created, rhs.created)
+                .append(completed, rhs.completed)
+                .append(jobs, rhs.jobs)
+                .isEquals();
     }
 
 }

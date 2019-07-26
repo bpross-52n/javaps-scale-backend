@@ -16,10 +16,18 @@
  */
 package org.n52.javaps.backend.scale;
 
+import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 
 import org.n52.javaps.algorithm.AbstractAlgorithm;
 import org.n52.javaps.algorithm.ExecutionException;
+import org.n52.javaps.backend.scale.api.QueueRecipe;
+import org.n52.javaps.backend.scale.api.Recipe;
+import org.n52.javaps.backend.scale.api.RecipeData;
+import org.n52.javaps.backend.scale.api.RecipeData.InputData;
+import org.n52.javaps.backend.scale.api.util.ScaleAuthorizationFailedException;
 import org.n52.javaps.description.TypedProcessDescription;
 import org.n52.javaps.description.TypedProcessInputDescription;
 import org.n52.javaps.description.TypedProcessOutputDescription;
@@ -37,8 +45,6 @@ import org.slf4j.LoggerFactory;
  *
  * @since 1.4.0
  *
- * TODO configure for all: jobControlOptions only async-execute dismiss
- * TODO configure for all: outputTransmission only reference
  *
  */
 public class ScaleAlgorithm extends AbstractAlgorithm {
@@ -68,6 +74,7 @@ public class ScaleAlgorithm extends AbstractAlgorithm {
         super();
         this.scaleService = scaleService;
         this.scaleId = scaleId;
+        // FIXME switch to builder pattern
         description = new TypedProcessDescriptionImpl(id,
                 title,
                 abstrakt,
@@ -82,8 +89,43 @@ public class ScaleAlgorithm extends AbstractAlgorithm {
 
     @Override
     public void execute(ProcessExecutionContext context) throws ExecutionException {
-        // TODO Auto-generated method stub
-        LOGGER.info("EXECUTE {}", this);
+        LOGGER.info("EXECUTE {} - {}", this, context.getJobId().getValue());
+        // TODO Prepare Workspace
+        // might not be required. We might use prepared workspaces for in- and output
+        // http://gmudcos.hopto.org/service/scale/#/workspaces/2 workspace-output
+        // TODO Prepare Inputs - only property inputs can be provided (from WPS as LiteralInputs)
+        // might not be required.
+        // TODO Queue Job
+        // convert context to queuejob
+        try {
+            // send queuejob to scale
+            int queuedRecipeId = scaleService.queue(convertToQueueRecipe(context));
+            if (queuedRecipeId < 1) {
+                throw new ExecutionException();
+            }
+            // WAIT for scale job to finish
+            // regulary check if job is finished via job status interface
+            Recipe result = scaleService.waitForRecipe(queuedRecipeId);
+            // TODO continue development here
+            // store results in context
+            // What about files?
+            // Can the scale urls be retrieved?
+            // Or
+            // I have to download and then save in GenericFileDataBinding
+            // and save in the context
+        } catch (IOException | ScaleAuthorizationFailedException e) {
+           throw new ExecutionException(e);
+        }
+        LOGGER.info("EXECUTE {} - {} FINISHED", this, context.getJobId().getValue());
+    }
+
+    private QueueRecipe convertToQueueRecipe(ProcessExecutionContext context) {
+        List<InputData> inputData = Collections.emptyList();
+        // get from context or configuration
+        Integer workspaceId = 2;
+        return new QueueRecipe()
+        .withRecipeTypeId(scaleId)
+        .withRecipeData(new RecipeData().withInputData(inputData).withWorkspaceId(workspaceId));
     }
 
     @Override

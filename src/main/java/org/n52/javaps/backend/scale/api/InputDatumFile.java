@@ -17,6 +17,8 @@
 package org.n52.javaps.backend.scale.api;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
@@ -34,46 +36,58 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
-    "id"
+    "name",
+    "required",
+    "media_types"
 })
-public class TriggerRule implements Serializable {
+public class InputDatumFile extends InputDatum implements Serializable {
 
-    @JsonProperty("id")
-    private long id;
     @JsonIgnore
-    private final static long serialVersionUID = 941787848814556491L;
+    private static final long serialVersionUID = 4338781105929133794L;
 
-    public TriggerRule() {
+    @JsonProperty("media_types")
+    private List<String> mediaTypes = new ArrayList<>();
+
+    public InputDatumFile() {
     }
 
-    public TriggerRule(long id) {
-        super();
-        this.id = id;
+    public InputDatumFile(String name, boolean required, List<String> mediaTypes) {
+        setName(name);
+        setRequired(required);
+        this.mediaTypes = mediaTypes;
     }
 
-    @JsonProperty("id")
-    public long getId() {
-        return id;
+    @JsonProperty("media_types")
+    public List<String> getMediaTypes() {
+        return mediaTypes;
     }
 
-    @JsonProperty("id")
-    public void setId(long id) {
-        this.id = id;
+    @JsonProperty("media_types")
+    public void setMediaTypes(List<String> mediaTypes) {
+        this.mediaTypes = mediaTypes;
     }
 
-    public TriggerRule withId(long id) {
-        this.id = id;
+    public InputDatum withMediaTypes(List<String> mediaTypes) {
+        this.mediaTypes = mediaTypes;
         return this;
     }
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("id", id).toString();
+        return new ToStringBuilder(this)
+                .append("name", getName())
+                .append("required", isRequired())
+                .append("mediaTypes", mediaTypes)
+                .toString();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(id).toHashCode();
+        return new HashCodeBuilder()
+                .append(getName())
+                .append(isRequired())
+                .append(mediaTypes)
+                .toHashCode();
     }
 
     @Override
@@ -81,11 +95,15 @@ public class TriggerRule implements Serializable {
         if (other == this) {
             return true;
         }
-        if (other instanceof TriggerRule == false) {
+        if (other instanceof InputDatumFile == false) {
             return false;
         }
-        TriggerRule rhs = (TriggerRule) other;
-        return new EqualsBuilder().append(id, rhs.id).isEquals();
+        InputDatumFile rhs = (InputDatumFile) other;
+        return new EqualsBuilder()
+                .append(getName(), rhs.getName())
+                .append(isRequired(), rhs.isRequired())
+                .append(mediaTypes, rhs.mediaTypes)
+                .isEquals();
     }
 
 }

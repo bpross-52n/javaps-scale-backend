@@ -17,6 +17,7 @@
 package org.n52.javaps.backend.scale.api;
 
 import java.io.Serializable;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,6 +25,7 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -40,22 +42,27 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
     "previous",
     "results"
 })
-public class Recipes implements Serializable {
+public class RecipeTypes implements Serializable {
 
     @JsonProperty("count")
     private long count;
+
     @JsonProperty("next")
-    private Object next;
+    private URL next;
+
     @JsonProperty("previous")
-    private Object previous;
+    private URL previous;
+
     @JsonProperty("results")
-    private List<ReferencedRecipe> results = new ArrayList<>();
+    private List<ReferencedRecipeType> results = new ArrayList<>();
+
+    @JsonIgnore
     private final static long serialVersionUID = -3862307913807334087L;
 
-    public Recipes() {
+    public RecipeTypes() {
     }
 
-    public Recipes(long count, Object next, Object previous, List<ReferencedRecipe> results) {
+    public RecipeTypes(long count, URL next, URL previous, List<ReferencedRecipeType> results) {
         super();
         this.count = count;
         this.next = next;
@@ -73,52 +80,52 @@ public class Recipes implements Serializable {
         this.count = count;
     }
 
-    public Recipes withCount(long count) {
+    public RecipeTypes withCount(long count) {
         this.count = count;
         return this;
     }
 
     @JsonProperty("next")
-    public Object getNext() {
+    public URL getNext() {
         return next;
     }
 
     @JsonProperty("next")
-    public void setNext(Object next) {
+    public void setNext(URL next) {
         this.next = next;
     }
 
-    public Recipes withNext(Object next) {
+    public RecipeTypes withNext(URL next) {
         this.next = next;
         return this;
     }
 
     @JsonProperty("previous")
-    public Object getPrevious() {
+    public URL getPrevious() {
         return previous;
     }
 
     @JsonProperty("previous")
-    public void setPrevious(Object previous) {
+    public void setPrevious(URL previous) {
         this.previous = previous;
     }
 
-    public Recipes withPrevious(Object previous) {
+    public RecipeTypes withPrevious(URL previous) {
         this.previous = previous;
         return this;
     }
 
     @JsonProperty("results")
-    public List<ReferencedRecipe> getResults() {
+    public List<ReferencedRecipeType> getResults() {
         return results;
     }
 
     @JsonProperty("results")
-    public void setResults(List<ReferencedRecipe> results) {
+    public void setResults(List<ReferencedRecipeType> results) {
         this.results = results;
     }
 
-    public Recipes withResults(List<ReferencedRecipe> results) {
+    public RecipeTypes withResults(List<ReferencedRecipeType> results) {
         this.results = results;
         return this;
     }
@@ -138,10 +145,10 @@ public class Recipes implements Serializable {
         if (other == this) {
             return true;
         }
-        if (other instanceof Recipes == false) {
+        if (other instanceof RecipeTypes == false) {
             return false;
         }
-        Recipes rhs = (Recipes) other;
+        RecipeTypes rhs = (RecipeTypes) other;
         return new EqualsBuilder().append(results, rhs.results).append(previous, rhs.previous).append(count, rhs.count).append(next, rhs.next).isEquals();
     }
 

@@ -22,6 +22,7 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -43,14 +44,20 @@ public class RecipeTypeRev implements Serializable {
 
     @JsonProperty("id")
     private long id;
+
     @JsonProperty("recipe_type")
     private ReferencedRecipeType recipeType;
+
     @JsonProperty("revision_num")
     private int revision;
+
     @JsonProperty("definition")
     private Definition definition;
+
     @JsonProperty("created")
     private String created;
+
+    @JsonIgnore
     private final static long serialVersionUID = -5478867691231506657L;
 
     public RecipeTypeRev() {

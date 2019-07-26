@@ -16,13 +16,18 @@
  */
 package org.n52.javaps.backend.scale;
 
+import org.n52.javaps.backend.scale.api.QueueRecipe;
 import org.n52.javaps.backend.scale.api.Recipe;
-import org.n52.javaps.backend.scale.api.Recipes;
+import org.n52.javaps.backend.scale.api.RecipeType;
+import org.n52.javaps.backend.scale.api.RecipeTypes;
 
 import retrofit2.Call;
+import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
+import retrofit2.http.POST;
 import retrofit2.http.Path;
+import retrofit2.http.Query;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">J&uuml;rrens, Eike Hinderk</a>
@@ -31,10 +36,20 @@ import retrofit2.http.Path;
  */
 public interface ScaleService {
 
-    @GET("recipes/")
-    Call<Recipes> getRecipes(@Header("Cookie") String dcosAuthCookie);
-
     @GET("recipes/{id}/")
     Call<Recipe> getRecipe(@Header("Cookie") String dcosAuthCookie, @Path("id") int id);
+
+    @GET("recipe-types/")
+    Call<RecipeTypes> getRecipeTypes(@Header("Cookie") String dcosAuthCookie);
+
+    @GET("recipe-types/")
+    Call<RecipeTypes> getRecipeTypes(@Header("Cookie") String dcosAuthCookie, @Query("page") int next);
+
+    @GET("recipe-types/{id}/")
+    Call<RecipeType> getRecipeType(@Header("Cookie") String dcosAuthCookie, @Path("id") int id);
+
+    @POST("queue/new-recipe/")
+    Call<Void> schedule(@Header("Cookie") String dcosAuthCookie, @Body QueueRecipe queueRecipe);
+
 
 }

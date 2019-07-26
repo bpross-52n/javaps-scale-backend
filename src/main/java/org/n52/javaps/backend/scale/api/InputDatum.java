@@ -16,10 +16,6 @@
  */
 package org.n52.javaps.backend.scale.api;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
@@ -27,6 +23,8 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">J&uuml;rrens, Eike Hinderk</a>
@@ -35,48 +33,26 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
-    "media_types",
-    "required",
-    "type",
-    "name"
+    "name",
+    "required"
 })
-public class InputDatum implements Serializable {
+@JsonTypeInfo(
+        use = JsonTypeInfo.Id.NAME,
+        include = JsonTypeInfo.As.EXTERNAL_PROPERTY,
+        property = "type"
+)
+@JsonSubTypes({
+        @JsonSubTypes.Type(value = InputDatumProperty.class, name = "property"),
+        @JsonSubTypes.Type(value = InputDatumFile.class, name = "file"),
+        @JsonSubTypes.Type(value = InputDatumFiles.class, name = "files")
+})
+public abstract class InputDatum {
 
-    @JsonProperty("media_types")
-    private List<String> mediaTypes = new ArrayList<>();
     @JsonProperty("required")
     private boolean required;
-    @JsonProperty("type")
-    private String type;
+
     @JsonProperty("name")
     private String name;
-    private final static long serialVersionUID = -8385028383865937124L;
-
-    public InputDatum() {
-    }
-
-    public InputDatum(List<String> mediaTypes, boolean required, String type, String name) {
-        super();
-        this.mediaTypes = mediaTypes;
-        this.required = required;
-        this.type = type;
-        this.name = name;
-    }
-
-    @JsonProperty("media_types")
-    public List<String> getMediaTypes() {
-        return mediaTypes;
-    }
-
-    @JsonProperty("media_types")
-    public void setMediaTypes(List<String> mediaTypes) {
-        this.mediaTypes = mediaTypes;
-    }
-
-    public InputDatum withMediaTypes(List<String> mediaTypes) {
-        this.mediaTypes = mediaTypes;
-        return this;
-    }
 
     @JsonProperty("required")
     public boolean isRequired() {
@@ -90,21 +66,6 @@ public class InputDatum implements Serializable {
 
     public InputDatum withRequired(boolean required) {
         this.required = required;
-        return this;
-    }
-
-    @JsonProperty("type")
-    public String getType() {
-        return type;
-    }
-
-    @JsonProperty("type")
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public InputDatum withType(String type) {
-        this.type = type;
         return this;
     }
 
@@ -125,12 +86,12 @@ public class InputDatum implements Serializable {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("mediaTypes", mediaTypes).append("required", required).append("type", type).append("name", name).toString();
+        return new ToStringBuilder(this).append("required", required).append("name", name).toString();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(name).append(mediaTypes).append(type).append(required).toHashCode();
+        return new HashCodeBuilder().append(name).append(required).toHashCode();
     }
 
     @Override
@@ -142,7 +103,7 @@ public class InputDatum implements Serializable {
             return false;
         }
         InputDatum rhs = (InputDatum) other;
-        return new EqualsBuilder().append(name, rhs.name).append(mediaTypes, rhs.mediaTypes).append(type, rhs.type).append(required, rhs.required).isEquals();
+        return new EqualsBuilder().append(name, rhs.name).append(required, rhs.required).isEquals();
     }
 
 }

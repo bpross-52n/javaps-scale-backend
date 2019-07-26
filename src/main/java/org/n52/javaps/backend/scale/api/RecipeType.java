@@ -22,6 +22,7 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -41,6 +42,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
     "description",
     "is_system",
     "is_active",
+    "definition",
     "revision_num",
     "created",
     "last_modified",
@@ -51,32 +53,48 @@ public class RecipeType implements Serializable {
 
     @JsonProperty("id")
     private int id;
+
     @JsonProperty("name")
     private String name;
+
     @JsonProperty("version")
     private String version;
+
     @JsonProperty("title")
     private String title;
+
     @JsonProperty("description")
     private String description;
+
     @JsonProperty("is_system")
     private boolean isSystem;
+
     @JsonProperty("is_active")
     private boolean isActive;
+
+    @JsonProperty("definition")
+    private Definition definition;
+
     @JsonProperty("revision_num")
     private int revision;
+
     @JsonProperty("created")
     private String created;
+
     @JsonProperty("last_modified")
     private String lastModified;
+
     @JsonProperty("archived")
     private String archived;
+
+    @JsonIgnore
     private final static long serialVersionUID = -3294460028265008915L;
 
     public RecipeType() {
     }
 
-    public RecipeType(int id, String name, String version, String title, String description, boolean isSystem, boolean isActive, int revision, String created, String lastModified, String archived) {
+    public RecipeType(int id, String name, String version, String title, String description, boolean isSystem,
+            boolean isActive, Definition definition, int revision, String created, String lastModified, String archived) {
         super();
         this.id = id;
         this.name = name;
@@ -85,6 +103,7 @@ public class RecipeType implements Serializable {
         this.description = description;
         this.isSystem = isSystem;
         this.isActive = isActive;
+        this.definition = definition;
         this.revision = revision;
         this.created = created;
         this.lastModified = lastModified;
@@ -92,7 +111,7 @@ public class RecipeType implements Serializable {
     }
 
     @JsonProperty("id")
-    public long getId() {
+    public int getId() {
         return id;
     }
 
@@ -193,6 +212,21 @@ public class RecipeType implements Serializable {
 
     public RecipeType withIsActive(boolean isActive) {
         this.isActive = isActive;
+        return this;
+    }
+
+    @JsonProperty("definition")
+    public Definition getDefinition() {
+        return definition;
+    }
+
+    @JsonProperty("definition")
+    public void setDefinition(Definition definition) {
+        this.definition = definition;
+    }
+
+    public RecipeType withDefinition(Definition definition) {
+        this.definition = definition;
         return this;
     }
 

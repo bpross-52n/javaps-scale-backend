@@ -22,6 +22,8 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -33,45 +35,74 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
-    "id"
+    "id",
+    "is_active"
 })
+@JsonIgnoreProperties(ignoreUnknown=true)
 public class ReferencedRecipeType implements Serializable {
 
     @JsonProperty("id")
-    private long id;
-    private final static long serialVersionUID = -3584862031134077036L;
+    private int id;
+
+    @JsonProperty("is_active")
+    private boolean isActive;
+
+    @JsonIgnore
+    private final static long serialVersionUID = 1000474927307839313L;
 
     public ReferencedRecipeType() {
     }
 
-    public ReferencedRecipeType(long id) {
+    public ReferencedRecipeType(int id, boolean isActive) {
         super();
         this.id = id;
+        this.isActive = isActive;
     }
 
     @JsonProperty("id")
-    public long getId() {
+    public int getId() {
         return id;
     }
 
     @JsonProperty("id")
-    public void setId(long id) {
+    public void setId(int id) {
         this.id = id;
     }
 
-    public ReferencedRecipeType withId(long id) {
+    public ReferencedRecipeType withId(int id) {
         this.id = id;
+        return this;
+    }
+
+     @JsonProperty("is_active")
+    public boolean isIsActive() {
+        return isActive;
+    }
+
+    @JsonProperty("is_active")
+    public void setIsActive(boolean isActive) {
+        this.isActive = isActive;
+    }
+
+    public ReferencedRecipeType withIsActive(boolean isActive) {
+        this.isActive = isActive;
         return this;
     }
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("id", id).toString();
+        return new ToStringBuilder(this)
+                .append("id", id)
+                .append("isSuperseded", isActive)
+                .toString();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(id).toHashCode();
+        return new HashCodeBuilder()
+                .append(isActive)
+                .append(id)
+                .toHashCode();
     }
 
     @Override
@@ -83,7 +114,10 @@ public class ReferencedRecipeType implements Serializable {
             return false;
         }
         ReferencedRecipeType rhs = (ReferencedRecipeType) other;
-        return new EqualsBuilder().append(id, rhs.id).isEquals();
+        return new EqualsBuilder()
+                .append(isActive, rhs.isActive)
+                .append(id, rhs.id)
+                .isEquals();
     }
 
 }

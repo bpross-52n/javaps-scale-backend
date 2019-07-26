@@ -22,6 +22,7 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -40,22 +41,16 @@ public class JobType implements Serializable {
 
     @JsonProperty("version")
     private String version;
+
     @JsonProperty("name")
     private String name;
+
+    @JsonIgnore
     private final static long serialVersionUID = 3031949327948349133L;
 
-    /**
-     * No args constructor for use in serialization
-     *
-     */
     public JobType() {
     }
 
-    /**
-     *
-     * @param name
-     * @param version
-     */
     public JobType(String version, String name) {
         super();
         this.version = version;

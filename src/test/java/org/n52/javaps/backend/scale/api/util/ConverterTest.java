@@ -33,18 +33,16 @@ import org.n52.janmayen.http.MediaTypes;
 import org.n52.javaps.backend.scale.ScaleAlgorithm;
 import org.n52.javaps.backend.scale.ScaleServiceController;
 import org.n52.javaps.backend.scale.api.Definition;
-import org.n52.javaps.backend.scale.api.InputDatum;
-import org.n52.javaps.backend.scale.api.Recipe;
+import org.n52.javaps.backend.scale.api.InputDatumFile;
+import org.n52.javaps.backend.scale.api.InputDatumProperty;
 import org.n52.javaps.backend.scale.api.RecipeType;
-import org.n52.javaps.backend.scale.api.RecipeTypeRev;
-import org.n52.javaps.backend.scale.api.ReferencedRecipeType;
 import org.n52.javaps.description.TypedProcessDescription;
 
 import com.google.common.collect.Lists;
 
 public class ConverterTest {
 
-    private Recipe recipe;
+    private RecipeType recipe;
 
     @Mock
     ScaleServiceController scaleService;
@@ -53,36 +51,33 @@ public class ConverterTest {
     public MockitoRule mockitoRule = MockitoJUnit.rule();
 
     @Before
-    public void initJobType() {
+    public void initRecipeType() {
         String now = ZonedDateTime.now().toString();
-        recipe = new Recipe()
+        recipe = new RecipeType()
                 .withId(23)
-                .withCreated(now)
-                .withLastModified(now)
-                .withRecipeType(new RecipeType()
-                        .withId(42)
-                        .withName("test-recipe-type-name")
-                        .withRevision(1)
-                        .withVersion("1.0.0")
-                        .withTitle("test-recipe-type-title")
-                        .withDescription("test-recipe-type-descrption")
-                        .withIsSystem(false)
-                        .withIsActive(true))
-                .withRecipeTypeRev(new RecipeTypeRev()
-                        .withId(42)
-                        .withRecipeType(new ReferencedRecipeType().withId(42))
-                        .withRevision(1)
-                        .withCreated(now)
-                        .withDefinition(new Definition()
-                                .withInputData(Lists.newArrayList(new InputDatum()
-                                        .withRequired(true)
-                                        .withType("file")
-                                        .withName("input_file")
-                                        // FIXME change to APPLICATION_OCTET_STREAM when javaPS changed to new arctic-sea version
-                                        .withMediaTypes(Collections.singletonList(MediaTypes.APPLICATION_XML.toString()))
-                                        ))
+                .withName("test-recipe-type-name")
+                .withVersion("1.0.0")
+                .withTitle("test-recipe-type-title")
+                .withDescription("test-recipe-type-descrption")
+                .withIsSystem(false)
+                .withIsActive(true)
+                .withDefinition(new Definition()
+                        .withInputData(
+                                Lists.newArrayList(
+                                        new InputDatumFile()
+                                            .withMediaTypes(Collections.singletonList(MediaTypes.APPLICATION_OCTET_STREAM.toString()))
+                                            .withRequired(true)
+                                            .withName("input_file")
+                                        ,
+                                        new InputDatumProperty()
+                                            .withName("input_property")
+                                            .withRequired(true)
+                                        )
                                 )
-                        );
+                        )
+                .withRevision(1)
+                .withCreated(now)
+                .withLastModified(now);
     }
 
     @Test
@@ -91,8 +86,8 @@ public class ConverterTest {
         assertThat(scaleAlgorithm, is(notNullValue()));
         assertThat(scaleAlgorithm.getDescription(), is(notNullValue()));
         TypedProcessDescription description = scaleAlgorithm.getDescription();
-        assertThat(description.getId().getValue(), is("scale-algorithm-test-recipe-type-name-v1.0.0-r1"));
-        assertThat(description.getVersion(), is("v1.0.0-r1"));
+        assertThat(description.getId().getValue(), is("scale-algorithm-test-recipe-type-name-1.0.0-r1"));
+        assertThat(description.getVersion(), is("1.0.0-r1"));
     }
 
 }

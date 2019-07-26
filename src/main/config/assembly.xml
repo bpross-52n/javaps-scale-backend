@@ -35,6 +35,8 @@
                 <include>com.squareup.retrofit2:converter-jackson</include>
                 <include>com.squareup.okhttp3:okhttp</include>
                 <include>com.squareup.okio:okio</include>
+                <include>org.n52.geoprocessing:javaps-iohandler</include>
+                <include>org.apache.xmlbeans:xmlbeans</include>
             </includes>
         </dependencySet>
     </dependencySets>

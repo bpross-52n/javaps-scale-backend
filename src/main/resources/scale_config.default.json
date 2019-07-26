@@ -6,5 +6,6 @@
 	"scale_jwt_auth_token"                               : "jwt-token-not-specified",
     "scale_info_cookie"                                  : "info-cookie-not-specified",
     "scale_algorithm_cache_update_startup_delay_seconds" : 5,
-    "scale_algorithm_cache_update_period_in_minutes"     : 1
+    "scale_algorithm_cache_update_period_in_minutes"     : 1,
+    "scale_waiting_sleep_in_seconds"                     : 30
 }

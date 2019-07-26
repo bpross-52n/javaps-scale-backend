@@ -24,6 +24,7 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -37,28 +38,27 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
     "input_data",
-    "version",
-    "jobs"
+    "version"
 })
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Definition implements Serializable {
 
     @JsonProperty("input_data")
     private List<InputDatum> inputData = new ArrayList<>();
+
     @JsonProperty("version")
     private String version;
-    @JsonProperty("jobs")
-    private List<Job> jobs = new ArrayList<>();
+
+    @JsonIgnore
     private final static long serialVersionUID = 6291516404977457466L;
 
     public Definition() {
     }
 
-    public Definition(List<InputDatum> inputData, String version, List<Job> jobs) {
+    public Definition(List<InputDatum> inputData, String version) {
         super();
         this.inputData = inputData;
         this.version = version;
-        this.jobs = jobs;
     }
 
     @JsonProperty("input_data")
@@ -91,29 +91,20 @@ public class Definition implements Serializable {
         return this;
     }
 
-    @JsonProperty("jobs")
-    public List<Job> getJobs() {
-        return jobs;
-    }
-
-    @JsonProperty("jobs")
-    public void setJobs(List<Job> jobs) {
-        this.jobs = jobs;
-    }
-
-    public Definition withJobs(List<Job> jobs) {
-        this.jobs = jobs;
-        return this;
-    }
-
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("inputData", inputData).append("version", version).append("jobs", jobs).toString();
+        return new ToStringBuilder(this)
+                .append("inputData", inputData)
+                .append("version", version)
+                .toString();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(jobs).append(inputData).append(version).toHashCode();
+        return new HashCodeBuilder()
+                .append(inputData)
+                .append(version)
+                .toHashCode();
     }
 
     @Override
@@ -125,7 +116,10 @@ public class Definition implements Serializable {
             return false;
         }
         Definition rhs = (Definition) other;
-        return new EqualsBuilder().append(jobs, rhs.jobs).append(inputData, rhs.inputData).append(version, rhs.version).isEquals();
+        return new EqualsBuilder()
+                .append(inputData, rhs.inputData)
+                .append(version, rhs.version)
+                .isEquals();
     }
 
 }
