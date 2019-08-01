@@ -26,7 +26,10 @@ import org.n52.javaps.backend.scale.ScaleAlgorithm;
 import org.n52.javaps.backend.scale.ScaleServiceController;
 import org.n52.javaps.backend.scale.api.InputDatum;
 import org.n52.javaps.backend.scale.api.InputDatumFile;
+import org.n52.javaps.backend.scale.api.JobType;
+import org.n52.javaps.backend.scale.api.OutputDatum;
 import org.n52.javaps.backend.scale.api.RecipeType;
+import org.n52.javaps.backend.scale.api.Task;
 import org.n52.javaps.description.TypedProcessInputDescription;
 import org.n52.javaps.description.TypedProcessOutputDescription;
 import org.n52.javaps.description.impl.TypedComplexInputDescriptionImpl;
@@ -61,48 +64,83 @@ public class Converter {
     }
 
     public ScaleAlgorithm convertToAlgorithm(RecipeType recipeType) {
-        LOGGER.trace("Converting Recipe '{}' to ScaleAlgorithm", recipeType);
-
-        OwsCode id = new OwsCode(String.format("%s-%s-%s-r%s",
-                ScaleAlgorithm.PREFIX,
-                recipeType.getName(),
-                recipeType.getVersion(),
-                recipeType.getRevision()));
+        LOGGER.trace("Converting RecipeType '{}' to ScaleAlgorithm", recipeType);
 
         // TODO better handling because of potential null values
-
-        OwsLanguageString title = new OwsLanguageString(recipeType.getTitle());
-        LOGGER.trace("Created title: '{}'", title);
-
-        OwsLanguageString abstrakt = new OwsLanguageString(recipeType.getDescription());
-        LOGGER.trace("Created abstrakt: '{}'", abstrakt);
-
-        Set<OwsKeyword> keywords = Collections.emptySet();
-        Set<OwsMetadata> metadata = Collections.emptySet();
-
-        Set<TypedProcessInputDescription<?>> inputs = convertToInputDescriptions(recipeType.getDefinition().getInputData());
-        Set<TypedProcessOutputDescription<?>> outputs = Collections.emptySet();
-        String version = String.format("%s-r%s",
-                recipeType.getVersion(),
-                recipeType.getRevision());
-        boolean storeSupported = true;
-        boolean statusSupported = true;
-
+        Set<TypedProcessInputDescription<?>> inputs = convertToInputDescriptions(
+                recipeType.getDefinition().getInputData());
+        Set<TypedProcessOutputDescription<?>> outputs = convertToOutputDescriptions(
+                recipeType.getDefinition().getOutputData());
         return new ScaleAlgorithm(scaleService,
                 recipeType.getId(),
-                id,
-                title,
-                abstrakt,
-                keywords,
-                metadata,
+                createId(recipeType),
+                createTitle(recipeType),
+                createAbstract(recipeType),
+                Collections.emptySet(),
+                Collections.emptySet(),
                 inputs,
                 outputs,
-                version,
-                storeSupported,
-                statusSupported);
+                createVersion(recipeType),
+                true,
+                true,
+                ScaleAlgorithm.Type.RECIPE);
     }
 
-    public Set<TypedProcessInputDescription<?>> convertToInputDescriptions(List<InputDatum> inputData) {
+    public ScaleAlgorithm convertToAlgorithm(JobType jobType) {
+        LOGGER.trace("Converting JobType '{}' to ScaleAlgorithm", jobType);
+
+        // TODO map JSON property that could be converted to input descriptions
+        Set<TypedProcessInputDescription<?>> inputs =
+                convertToInputDescriptions(jobType.getInterface().getInputData());
+        Set<TypedProcessOutputDescription<?>> outputs =
+                convertToOutputDescriptions(jobType.getInterface().getOutputData());
+        return new ScaleAlgorithm(scaleService,
+                jobType.getId(),
+                createId(jobType),
+                createTitle(jobType),
+                createAbstract(jobType),
+                Collections.emptySet(),
+                Collections.emptySet(),
+                inputs,
+                outputs,
+                createVersion(jobType),
+                true,
+                true,
+                ScaleAlgorithm.Type.JOB);
+    }
+
+    private OwsLanguageString createAbstract(Task task) {
+        OwsLanguageString abstrakt = new OwsLanguageString(task.getDescription());
+        LOGGER.trace("Created abstrakt: '{}'", abstrakt);
+        return abstrakt;
+    }
+
+    private OwsCode createId(Task task) {
+        return new OwsCode(String.format("%s-%s-%s-r%s",
+                ScaleAlgorithm.PREFIX,
+                task.getName(),
+                task.getVersion(),
+                task.getRevision()));
+    }
+
+    private OwsLanguageString createTitle(Task task) {
+        OwsLanguageString title = new OwsLanguageString(task.getTitle());
+        LOGGER.trace("Created title: '{}'", title);
+        return title;
+    }
+
+    private String createVersion(Task task) {
+        return String.format("%s-r%s",
+                task.getVersion(),
+                task.getRevision());
+    }
+
+    private Set<TypedProcessOutputDescription<?>> convertToOutputDescriptions(List<OutputDatum> outputData) {
+        // TODO Auto-generated method stub -> implement me!
+        return Collections.emptySet();
+    }
+
+    private Set<TypedProcessInputDescription<?>> convertToInputDescriptions(List<InputDatum> inputData) {
         if (inputData == null || inputData.isEmpty()) {
             return Collections.emptySet();
         }

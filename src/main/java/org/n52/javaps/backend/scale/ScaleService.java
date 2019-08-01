@@ -16,6 +16,8 @@
  */
 package org.n52.javaps.backend.scale;
 
+import org.n52.javaps.backend.scale.api.JobType;
+import org.n52.javaps.backend.scale.api.JobTypes;
 import org.n52.javaps.backend.scale.api.QueueRecipe;
 import org.n52.javaps.backend.scale.api.Recipe;
 import org.n52.javaps.backend.scale.api.RecipeType;
@@ -52,6 +54,15 @@ public interface ScaleService {
 
     @POST("queue/new-recipe/")
     Call<Void> schedule(@Header("Cookie") String dcosAuthCookie, @Body QueueRecipe queueRecipe);
+
+    @GET("job-types/")
+    Call<JobTypes> getJobTypes(@Header("Cookie") String dcosAuthCookie);
+
+    @GET("job-types/")
+    Call<JobTypes> getJobTypes(@Header("Cookie") String dcosAuthCookie, @Query("page") int page);
+
+    @GET("job-types/{id}/")
+    Call<JobType> getJobType(@Header("Cookie") String dcosAuthCookie, @Path("id") int id);
 
 
 }

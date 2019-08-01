@@ -18,6 +18,7 @@ package org.n52.javaps.backend.scale.api;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
@@ -120,6 +121,11 @@ public class Definition implements Serializable {
                 .append(inputData, rhs.inputData)
                 .append(version, rhs.version)
                 .isEquals();
+    }
+
+    public List<OutputDatum> getOutputData() {
+        // TODO Auto-generated method stub -> implement me!
+        return Collections.emptyList();
     }
 
 }

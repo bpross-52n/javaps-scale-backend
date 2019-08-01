@@ -17,6 +17,7 @@
 package org.n52.javaps.backend.scale.api;
 
 import java.io.Serializable;
+import java.util.List;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
@@ -29,79 +30,81 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 /**
+ * http://gmudcos.hopto.org/service/scale/docs/architecture/jobs/job_interface.html#architecture-jobs-interface-spec
+ *
  * @author <a href="mailto:e.h.juerrens@52north.org">J&uuml;rrens, Eike Hinderk</a>
  *
- * @since 1.4.0
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
-    "id",
-    "is_active"
+    "input_data",
+    "output_data"
 })
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ReferencedJobType implements Serializable {
+public class Interface implements Serializable {
 
     @JsonIgnore
-    private static final long serialVersionUID = 3031949327948349133L;
+    private static final long serialVersionUID = 577712678739685957L;
 
-    @JsonProperty("id")
-    private int id;
+    @JsonProperty("input_data")
+    private List<InputDatum> inputData;
 
-    @JsonProperty("is_active")
-    private boolean isActive;
+    @JsonProperty("output_data")
+    private List<OutputDatum> outputData;
 
-    public ReferencedJobType() {
+    public Interface() {
     }
 
-    public ReferencedJobType(int id, boolean isActive) {
+    public Interface(List<InputDatum> inputData, List<OutputDatum> outputData) {
         super();
-        this.id = id;
-        this.isActive = isActive;
+        this.inputData = inputData;
+        this.outputData = outputData;
     }
 
-    @JsonProperty("id")
-    public int getId() {
-        return id;
+    @JsonProperty("input_data")
+    public List<InputDatum> getInputData() {
+        return inputData;
     }
 
-    @JsonProperty("id")
-    public void setId(int id) {
-        this.id = id;
+    @JsonProperty("input_data")
+    public void setInputData(List<InputDatum> inputData) {
+        this.inputData = inputData;
     }
 
-    public ReferencedJobType withId(int id) {
-        this.id = id;
+    public Interface withInputData(List<InputDatum> inputData) {
+        this.inputData = inputData;
         return this;
     }
 
-    @JsonProperty("is_active")
-    public boolean isIsActive() {
-        return isActive;
+    @JsonProperty("output_data")
+    public List<OutputDatum> getOutputData() {
+        return outputData;
     }
 
-    @JsonProperty("is_active")
-    public void setIsActive(boolean isActive) {
-        this.isActive = isActive;
+    @JsonProperty("output_data")
+    public void setOutputData(List<OutputDatum> outputData) {
+        this.outputData = outputData;
     }
 
-    public ReferencedJobType withIsActive(boolean isActive) {
-        this.isActive = isActive;
+    public Interface withOutputData(List<OutputDatum> outputData) {
+        this.outputData = outputData;
         return this;
     }
+
 
     @Override
     public String toString() {
         return new ToStringBuilder(this)
-                .append("id", id)
-                .append("isActive", isActive)
+                .append("inputData", inputData)
+                .append("outputData", outputData)
                 .toString();
     }
 
     @Override
     public int hashCode() {
         return new HashCodeBuilder()
-                .append(isActive)
-                .append(id)
+                .append(inputData)
+                .append(outputData)
                 .toHashCode();
     }
 
@@ -110,13 +113,13 @@ public class ReferencedJobType implements Serializable {
         if (other == this) {
             return true;
         }
-        if (!(other instanceof ReferencedJobType)) {
+        if (!(other instanceof Interface)) {
             return false;
         }
-        ReferencedJobType rhs = (ReferencedJobType) other;
+        Interface rhs = (Interface) other;
         return new EqualsBuilder()
-                .append(isActive, rhs.isActive)
-                .append(id, rhs.id)
+                .append(inputData, rhs.inputData)
+                .append(outputData, rhs.outputData)
                 .isEquals();
     }
 

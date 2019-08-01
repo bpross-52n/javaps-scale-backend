@@ -49,46 +49,13 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
     "archived"
 })
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class RecipeType implements Serializable {
-
-    @JsonProperty("id")
-    private int id;
-
-    @JsonProperty("name")
-    private String name;
-
-    @JsonProperty("version")
-    private String version;
-
-    @JsonProperty("title")
-    private String title;
-
-    @JsonProperty("description")
-    private String description;
-
-    @JsonProperty("is_system")
-    private boolean isSystem;
-
-    @JsonProperty("is_active")
-    private boolean isActive;
-
-    @JsonProperty("definition")
-    private Definition definition;
-
-    @JsonProperty("revision_num")
-    private int revision;
-
-    @JsonProperty("created")
-    private String created;
-
-    @JsonProperty("last_modified")
-    private String lastModified;
-
-    @JsonProperty("archived")
-    private String archived;
+public class RecipeType extends Task implements Serializable {
 
     @JsonIgnore
     private static final long serialVersionUID = -3294460028265008915L;
+
+    @JsonProperty("definition")
+    private Definition definition;
 
     public RecipeType() {
     }
@@ -104,116 +71,11 @@ public class RecipeType implements Serializable {
         this.description = description;
         this.isSystem = isSystem;
         this.isActive = isActive;
-        this.definition = definition;
         this.revision = revision;
         this.created = created;
         this.lastModified = lastModified;
         this.archived = archived;
-    }
-
-    @JsonProperty("id")
-    public int getId() {
-        return id;
-    }
-
-    @JsonProperty("id")
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public RecipeType withId(int id) {
-        this.id = id;
-        return this;
-    }
-
-    @JsonProperty("name")
-    public String getName() {
-        return name;
-    }
-
-    @JsonProperty("name")
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public RecipeType withName(String name) {
-        this.name = name;
-        return this;
-    }
-
-    @JsonProperty("version")
-    public String getVersion() {
-        return version;
-    }
-
-    @JsonProperty("version")
-    public void setVersion(String version) {
-        this.version = version;
-    }
-
-    public RecipeType withVersion(String version) {
-        this.version = version;
-        return this;
-    }
-
-    @JsonProperty("title")
-    public String getTitle() {
-        return title;
-    }
-
-    @JsonProperty("title")
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public RecipeType withTitle(String title) {
-        this.title = title;
-        return this;
-    }
-
-    @JsonProperty("description")
-    public String getDescription() {
-        return description;
-    }
-
-    @JsonProperty("description")
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public RecipeType withDescription(String description) {
-        this.description = description;
-        return this;
-    }
-
-    @JsonProperty("is_system")
-    public boolean isIsSystem() {
-        return isSystem;
-    }
-
-    @JsonProperty("is_system")
-    public void setIsSystem(boolean isSystem) {
-        this.isSystem = isSystem;
-    }
-
-    public RecipeType withIsSystem(boolean isSystem) {
-        this.isSystem = isSystem;
-        return this;
-    }
-
-    @JsonProperty("is_active")
-    public boolean isIsActive() {
-        return isActive;
-    }
-
-    @JsonProperty("is_active")
-    public void setIsActive(boolean isActive) {
-        this.isActive = isActive;
-    }
-
-    public RecipeType withIsActive(boolean isActive) {
-        this.isActive = isActive;
-        return this;
+        this.definition = definition;
     }
 
     @JsonProperty("definition")
@@ -231,64 +93,18 @@ public class RecipeType implements Serializable {
         return this;
     }
 
-    @JsonProperty("revision_num")
-    public int getRevision() {
-        return revision;
-    }
-
-    @JsonProperty("revision_num")
-    public void setRevision(int revision) {
-        this.revision = revision;
-    }
-
-    public RecipeType withRevision(int revision) {
-        this.revision = revision;
-        return this;
-    }
-
-    @JsonProperty("created")
-    public String getCreated() {
-        return created;
-    }
-
-    @JsonProperty("created")
-    public void setCreated(String created) {
-        this.created = created;
-    }
-
-    public RecipeType withCreated(String created) {
-        this.created = created;
-        return this;
-    }
-
-    @JsonProperty("last_modified")
-    public String getLastModified() {
-        return lastModified;
-    }
-
-    @JsonProperty("last_modified")
-    public void setLastModified(String lastModified) {
-        this.lastModified = lastModified;
-    }
-
-    public RecipeType withLastModified(String lastModified) {
-        this.lastModified = lastModified;
-        return this;
-    }
-
-    @JsonProperty("archived")
-    public Object getArchived() {
-        return archived;
-    }
-
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("id", id).append("name", name).append("version", version).append("title", title).append("description", description).append("isSystem", isSystem).append("isActive", isActive).append("revision", revision).append("created", created).append("lastModified", lastModified).append("archived", archived).toString();
+        return new ToStringBuilder(this)
+                .append("definition", definition)
+                .toString();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(lastModified).append(revision).append(isSystem).append(version).append(isActive).append(id).append(title).append(archived).append(created).append(description).append(name).toHashCode();
+        return new HashCodeBuilder()
+                .append(definition)
+                .toHashCode();
     }
 
     @Override
@@ -300,7 +116,9 @@ public class RecipeType implements Serializable {
             return false;
         }
         RecipeType rhs = (RecipeType) other;
-        return new EqualsBuilder().append(lastModified, rhs.lastModified).append(revision, rhs.revision).append(isSystem, rhs.isSystem).append(version, rhs.version).append(isActive, rhs.isActive).append(id, rhs.id).append(title, rhs.title).append(archived, rhs.archived).append(created, rhs.created).append(description, rhs.description).append(name, rhs.name).isEquals();
+        return new EqualsBuilder()
+                .append(definition, rhs.definition)
+                .isEquals();
     }
 
 }

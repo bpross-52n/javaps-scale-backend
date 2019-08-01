@@ -24,7 +24,6 @@ import java.util.Set;
 import org.n52.javaps.algorithm.AbstractAlgorithm;
 import org.n52.javaps.algorithm.ExecutionException;
 import org.n52.javaps.backend.scale.api.QueueRecipe;
-import org.n52.javaps.backend.scale.api.Recipe;
 import org.n52.javaps.backend.scale.api.RecipeData;
 import org.n52.javaps.backend.scale.api.RecipeData.InputData;
 import org.n52.javaps.backend.scale.api.util.ScaleAuthorizationFailedException;
@@ -59,6 +58,12 @@ public class ScaleAlgorithm extends AbstractAlgorithm {
 
     private int scaleId;
 
+    public enum Type {
+            RECIPE,
+            JOB,
+            BATCH
+    }
+
     public ScaleAlgorithm(ScaleServiceController scaleService,
             int scaleId,
             OwsCode id,
@@ -70,7 +75,8 @@ public class ScaleAlgorithm extends AbstractAlgorithm {
             Set<TypedProcessOutputDescription<?>> outputs,
             String version,
             boolean storeSupported,
-            boolean statusSupported) {
+            boolean statusSupported,
+            Type type) {
         super();
         this.scaleService = scaleService;
         this.scaleId = scaleId;
@@ -121,6 +127,7 @@ public class ScaleAlgorithm extends AbstractAlgorithm {
 
     private QueueRecipe convertToQueueRecipe(ProcessExecutionContext context) {
         List<InputData> inputData = Collections.emptyList();
+        // TODO convert input data from context to inputdata for Recipe
         // get from context or configuration
         Integer workspaceId = 2;
         return new QueueRecipe()

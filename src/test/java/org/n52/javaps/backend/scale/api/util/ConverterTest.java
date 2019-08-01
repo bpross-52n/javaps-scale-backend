@@ -53,14 +53,7 @@ public class ConverterTest {
     @Before
     public void initRecipeType() {
         String now = ZonedDateTime.now().toString();
-        recipe = new RecipeType()
-                .withId(23)
-                .withName("test-recipe-type-name")
-                .withVersion("1.0.0")
-                .withTitle("test-recipe-type-title")
-                .withDescription("test-recipe-type-descrption")
-                .withIsSystem(false)
-                .withIsActive(true)
+        recipe = (RecipeType) new RecipeType()
                 .withDefinition(new Definition()
                         .withInputData(
                                 Lists.newArrayList(
@@ -75,6 +68,13 @@ public class ConverterTest {
                                         )
                                 )
                         )
+                .withId(23)
+                .withName("test-recipe-type-name")
+                .withVersion("1.0.0")
+                .withTitle("test-recipe-type-title")
+                .withDescription("test-recipe-type-descrption")
+                .withIsSystem(false)
+                .withIsActive(true)
                 .withRevision(1)
                 .withCreated(now)
                 .withLastModified(now);

@@ -30,11 +30,14 @@ import javax.security.auth.Destroyable;
 
 import org.n52.janmayen.lifecycle.Constructable;
 import org.n52.javaps.backend.scale.api.Job;
+import org.n52.javaps.backend.scale.api.JobType;
+import org.n52.javaps.backend.scale.api.JobTypes;
 import org.n52.javaps.backend.scale.api.Jobs;
 import org.n52.javaps.backend.scale.api.QueueRecipe;
 import org.n52.javaps.backend.scale.api.Recipe;
 import org.n52.javaps.backend.scale.api.RecipeType;
 import org.n52.javaps.backend.scale.api.RecipeTypes;
+import org.n52.javaps.backend.scale.api.ReferencedJobType;
 import org.n52.javaps.backend.scale.api.ReferencedRecipeType;
 import org.n52.javaps.backend.scale.api.util.Converter;
 import org.n52.javaps.backend.scale.api.util.ScaleAuthorizationFailedException;
@@ -73,6 +76,63 @@ public class ScaleServiceController implements Constructable, Destroyable {
 
     public List<ScaleAlgorithm> getAlgorithms() throws IOException, ScaleAuthorizationFailedException {
         List<ScaleAlgorithm> result = new LinkedList<>();
+        processRecipeTypes(result);
+        processJobTypes(result);
+        if (result.isEmpty()) {
+            return Collections.emptyList();
+        } else {
+            return Collections.unmodifiableList(result);
+        }
+    }
+
+    // TODO reduce code duplication
+    private void processJobTypes(List<ScaleAlgorithm> result)
+            throws NumberFormatException, IOException, ScaleAuthorizationFailedException {
+        JobTypes jobTypes = null;
+        do {
+            Call<JobTypes> jobTypesCall = scaleService.getJobTypes(getAuthCookieContent());
+            if (jobTypes != null && jobTypes.getNext() != null) {
+                int page = Integer.parseInt(
+                        UriComponentsBuilder.fromUriString(jobTypes.getNext().toExternalForm()).build()
+                        .getQueryParams().get(ScaleService.QUERY_PARAM_KEY_PAGE).get(0));
+                jobTypesCall = scaleService.getJobTypes(getAuthCookieContent(), page);
+            }
+            Response<JobTypes> jobTypesResponse = jobTypesCall.execute();
+            if (!jobTypesResponse.isSuccessful()) {
+                LOGGER.error("Requesting job types from scale web server failed!\n{}", jobTypesResponse.errorBody());
+                if (isUnauthorized(jobTypesResponse)) {
+                    throw new ScaleAuthorizationFailedException();
+                }
+                // TODO improve error handling using response codes and headers
+                throw new IOException(jobTypesResponse.errorBody().toString());
+            }
+            jobTypes = jobTypesResponse.body();
+            for (ReferencedJobType jobReference : jobTypes.getResults()) {
+                if (!jobReference.isIsActive()) {
+                    continue;
+                }
+                Call<JobType> jobTypeCall = scaleService.getJobType(
+                        getAuthCookieContent(),
+                        jobReference.getId());
+                Response<JobType> jobTypeResponse = jobTypeCall.execute();
+                if (!jobTypeResponse.isSuccessful()) {
+                    LOGGER.error("Requesting job type '{}' from scale web server failed!\n{}",
+                            jobTypeResponse.raw().request().url(),
+                            jobTypeResponse.errorBody());
+                    if (isUnauthorized(jobTypeResponse)) {
+                        throw new ScaleAuthorizationFailedException();
+                    }
+                    continue;
+                }
+                JobType jobType = jobTypeResponse.body();
+                result.add(converter.convertToAlgorithm(jobType));
+            }
+        } while (jobTypes.getNext() != null);
+    }
+
+    // TODO reduce code duplication
+    private void processRecipeTypes(List<ScaleAlgorithm> result)
+            throws NumberFormatException, IOException, ScaleAuthorizationFailedException {
         RecipeTypes recipeTypes = null;
         do {
             Call<RecipeTypes> call = scaleService.getRecipeTypes(getAuthCookieContent());
@@ -101,7 +161,7 @@ public class ScaleServiceController implements Constructable, Destroyable {
                         recipeReference.getId());
                 Response<RecipeType> recipeTypeResponse = recipeTypeCall.execute();
                 if (!recipeTypeResponse.isSuccessful()) {
-                    LOGGER.error("Requesting recipe '{}' from scale web server failed!\n{}",
+                    LOGGER.error("Requesting recipe type '{}' from scale web server failed!\n{}",
                             recipeTypeResponse.raw().request().url(),
                             recipeTypeResponse.errorBody());
                     if (isUnauthorized(recipeTypeResponse)) {
@@ -112,12 +172,7 @@ public class ScaleServiceController implements Constructable, Destroyable {
                 RecipeType recipeType = recipeTypeResponse.body();
                 result.add(converter.convertToAlgorithm(recipeType));
             }
-        } while (recipeTypes != null && recipeTypes.getNext() != null);
-        if (result.isEmpty()) {
-            return Collections.emptyList();
-        } else {
-            return Collections.unmodifiableList(result);
-        }
+        } while (recipeTypes.getNext() != null);
     }
 
     public int queue(QueueRecipe queueRecipe) throws IOException, ScaleAuthorizationFailedException {

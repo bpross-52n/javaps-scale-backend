@@ -23,6 +23,7 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -34,68 +35,86 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
+    "id",
+    "name",
     "version",
-    "name"
+    "title",
+    "description",
+    "is_system",
+    "is_active",
+    "revision_num",
+    "created",
+    "archived",
+    "last_modified",
+    "interface"
 })
-public class JobType implements Serializable {
-
-    @JsonProperty("version")
-    private String version;
-
-    @JsonProperty("name")
-    private String name;
 @JsonIgnoreProperties(ignoreUnknown = true)
+public class JobType extends Task implements Serializable {
 
     @JsonIgnore
     private static final long serialVersionUID = -3294460028265008915L;
 
+    @JsonProperty("interface")
+    private Interface interFace;
+
     public JobType() {
     }
 
-    public JobType(String version, String name) {
+    public JobType(int id, String name, String version, String title, String description, boolean isSystem,
+            boolean isActive, int revision, String created, String lastModified, String archived, Interface interFace) {
         super();
-        this.version = version;
+        this.id = id;
         this.name = name;
-    }
-
-    @JsonProperty("version")
-    public String getVersion() {
-        return version;
-    }
-
-    @JsonProperty("version")
-    public void setVersion(String version) {
         this.version = version;
+        this.title = title;
+        this.description = description;
+        this.isSystem = isSystem;
+        this.isActive = isActive;
+        this.revision = revision;
+        this.created = created;
+        this.lastModified = lastModified;
+        this.archived = archived;
+        this.interFace = interFace;
     }
 
-    public JobType withVersion(String version) {
-        this.version = version;
+    @JsonProperty("interface")
+    public Interface getInterface() {
+        return interFace;
+    }
+
+    @JsonProperty("interface")
+    public void setInterface(Interface interFace) {
+        this.interFace = interFace;
+    }
+
+    public JobType withInterface(Interface interFace) {
+        this.interFace = interFace;
         return this;
     }
 
-    @JsonProperty("name")
-    public String getName() {
-        return name;
-    }
-
-    @JsonProperty("name")
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public JobType withName(String name) {
-        this.name = name;
-        return this;
-    }
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("version", version).append("name", name).toString();
+        return new ToStringBuilder(this)
+                .append("id", id)
+                .append("name", name)
+                .append("version", version)
+                .append("title", title)
+                .append("description", description)
+                .append("isSystem", isSystem)
+                .append("isActive", isActive)
+                .append("revision", revision)
+                .append("created", created)
+                .append("lastModified", lastModified)
+                .append("archived", archived)
+                .toString();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(name).append(version).toHashCode();
+        return new HashCodeBuilder()
+                .append(interFace)
+                .toHashCode();
     }
 
     @Override
