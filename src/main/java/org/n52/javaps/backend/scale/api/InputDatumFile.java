@@ -25,6 +25,7 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -40,6 +41,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
     "required",
     "media_types"
 })
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class InputDatumFile extends InputDatum implements Serializable {
 
     @JsonIgnore
@@ -95,7 +97,7 @@ public class InputDatumFile extends InputDatum implements Serializable {
         if (other == this) {
             return true;
         }
-        if (other instanceof InputDatumFile == false) {
+        if (!(other instanceof InputDatumFile)) {
             return false;
         }
         InputDatumFile rhs = (InputDatumFile) other;

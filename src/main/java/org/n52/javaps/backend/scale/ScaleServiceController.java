@@ -79,7 +79,7 @@ public class ScaleServiceController implements Constructable, Destroyable {
             if (recipeTypes != null && recipeTypes.getNext() != null) {
                 int page = Integer.parseInt(
                         UriComponentsBuilder.fromUriString(recipeTypes.getNext().toExternalForm()).build()
-                        .getQueryParams().get("page").get(0));
+                        .getQueryParams().get(ScaleService.QUERY_PARAM_KEY_PAGE).get(0));
                 call = scaleService.getRecipeTypes(getAuthCookieContent(), page);
             }
             Response<RecipeTypes> response = call.execute();
@@ -146,20 +146,20 @@ public class ScaleServiceController implements Constructable, Destroyable {
 
     private String getAuthCookieContent() {
         return String.format("dcos-acs-auth-cookie=%s; dcos-acs-info-cookie=%s",
-                configuration.getJWTAuthToken().orElse("not-specified"),
-                configuration.getInfoCookie().orElse("not-specified"));
+                configuration.getJWTAuthToken().orElse(ScaleConfiguration.CONFIGURATION_VALUE_NOT_SPECIFIED),
+                configuration.getInfoCookie().orElse(ScaleConfiguration.CONFIGURATION_VALUE_NOT_SPECIFIED));
     }
 
     @Override
     public void init() {
         LOGGER.trace("START INIT {}", this);
-        Optional<URL> optional = configuration.getWebserverEndpoint();
-        if(!optional.isPresent()) {
+        Optional<URL> baseUrl = configuration.getWebserverEndpoint();
+        if (!baseUrl.isPresent()) {
             LOGGER.error("Could not get base url of scale webserver -> cancel init.");
             // FIXME mark as not working!
         } else {
             retrofit = new Retrofit.Builder()
-                    .baseUrl(optional.get())
+                    .baseUrl(baseUrl.get())
                     .addConverterFactory(JacksonConverterFactory.create())
                     .build();
             scaleService = retrofit.create(ScaleService.class);
@@ -188,13 +188,14 @@ public class ScaleServiceController implements Constructable, Destroyable {
             if (recipe.getCompleted() == null) {
                 // for each job
                 for (Jobs job : recipe.getJobs()) {
-                  // if status not failed or not completed or not blocked
+                    // if status not failed or not completed or not blocked
                     if (requiresFurtherWaiting(job.getJob().getStatus())) {
                         // continue (sleep n seconds)
                         // n needs to be configured
                         try {
                             Thread.sleep(configuration.getWaitingSleepInSeconds() * 1000);
                         } catch (InterruptedException e) {
+                            LOGGER.trace("Sleep interrupted", e);
                         }
                         continueWaiting = true;
                         break;

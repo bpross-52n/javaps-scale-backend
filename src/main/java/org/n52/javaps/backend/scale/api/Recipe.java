@@ -46,6 +46,9 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Recipe implements Serializable {
 
+    @JsonIgnore
+    private static final long serialVersionUID = 3110533031488141475L;
+
     @JsonProperty("id")
     private int id;
 
@@ -63,9 +66,6 @@ public class Recipe implements Serializable {
 
     @JsonProperty("jobs")
     private List<Jobs> jobs;
-
-    @JsonIgnore
-    private final static long serialVersionUID = 3110533031488141475L;
 
     public Recipe() {
     }
@@ -198,7 +198,7 @@ public class Recipe implements Serializable {
         if (other == this) {
             return true;
         }
-        if (other instanceof Recipe == false) {
+        if (!(other instanceof Recipe)) {
             return false;
         }
         Recipe rhs = (Recipe) other;

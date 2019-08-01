@@ -19,6 +19,7 @@ package org.n52.javaps.backend.scale.api;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
@@ -28,6 +29,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
     "required",
     "media_types"
 })
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class InputDatumFiles extends InputDatumFile {
 
     @JsonIgnore

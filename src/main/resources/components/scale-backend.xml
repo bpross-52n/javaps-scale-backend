@@ -25,6 +25,6 @@
                            http://www.springframework.org/schema/util/spring-util-4.1.xsd">
     <bean id="scale_config"              class="org.n52.javaps.backend.scale.ScaleConfiguration" />
     <bean id="scale_cache"               class="org.n52.javaps.backend.scale.ScaleRepositoryCache" />
-    <bean id="scale_service"             class="org.n52.javaps.backend.scale.ScaleServiceController" />
+    <bean id="scale_service_controller"  class="org.n52.javaps.backend.scale.ScaleServiceController" />
     <bean id="scale_repository"          class="org.n52.javaps.backend.scale.ScaleRepository" />
 </beans>

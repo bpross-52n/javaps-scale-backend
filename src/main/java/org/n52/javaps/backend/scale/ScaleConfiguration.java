@@ -35,8 +35,10 @@ import com.fasterxml.jackson.databind.JsonNode;
  * @since 1.4.0
  *
  */
-@Properties(defaultPropertyFileName="scale_config.default.json", propertyFileName="scale_config.json")
+@Properties(defaultPropertyFileName = "scale_config.default.json", propertyFileName = "scale_config.json")
 public class ScaleConfiguration implements ConfigurableClass {
+
+    public static final String CONFIGURATION_VALUE_NOT_SPECIFIED = "not-specified";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ScaleConfiguration.class);
 

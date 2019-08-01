@@ -36,6 +36,8 @@ import retrofit2.http.Query;
  */
 public interface ScaleService {
 
+    String QUERY_PARAM_KEY_PAGE = "page";
+
     @GET("recipes/{id}/")
     Call<Recipe> getRecipe(@Header("Cookie") String dcosAuthCookie, @Path("id") int id);
 
@@ -43,7 +45,7 @@ public interface ScaleService {
     Call<RecipeTypes> getRecipeTypes(@Header("Cookie") String dcosAuthCookie);
 
     @GET("recipe-types/")
-    Call<RecipeTypes> getRecipeTypes(@Header("Cookie") String dcosAuthCookie, @Query("page") int next);
+    Call<RecipeTypes> getRecipeTypes(@Header("Cookie") String dcosAuthCookie, @Query("page") int page);
 
     @GET("recipe-types/{id}/")
     Call<RecipeType> getRecipeType(@Header("Cookie") String dcosAuthCookie, @Path("id") int id);

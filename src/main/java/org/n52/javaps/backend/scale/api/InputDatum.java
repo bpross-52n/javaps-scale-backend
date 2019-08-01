@@ -20,6 +20,7 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -46,6 +47,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
         @JsonSubTypes.Type(value = InputDatumFile.class, name = "file"),
         @JsonSubTypes.Type(value = InputDatumFiles.class, name = "files")
 })
+@JsonIgnoreProperties(ignoreUnknown = true)
 public abstract class InputDatum {
 
     @JsonProperty("required")
@@ -99,7 +101,7 @@ public abstract class InputDatum {
         if (other == this) {
             return true;
         }
-        if (other instanceof InputDatum == false) {
+        if (!(other instanceof InputDatum)) {
             return false;
         }
         InputDatum rhs = (InputDatum) other;

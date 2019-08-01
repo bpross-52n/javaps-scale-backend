@@ -49,9 +49,9 @@ import org.slf4j.LoggerFactory;
  */
 public class ScaleAlgorithm extends AbstractAlgorithm {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ScaleAlgorithm.class);
-
     public static final String PREFIX = "scale-algorithm";
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ScaleAlgorithm.class);
 
     private ScaleServiceController scaleService;
 
@@ -104,8 +104,8 @@ public class ScaleAlgorithm extends AbstractAlgorithm {
                 throw new ExecutionException();
             }
             // WAIT for scale job to finish
-            // regulary check if job is finished via job status interface
-            Recipe result = scaleService.waitForRecipe(queuedRecipeId);
+            // Regularly check if job is finished via job status interface
+            /*Recipe result = */scaleService.waitForRecipe(queuedRecipeId);
             // TODO continue development here
             // store results in context
             // What about files?
@@ -114,7 +114,7 @@ public class ScaleAlgorithm extends AbstractAlgorithm {
             // I have to download and then save in GenericFileDataBinding
             // and save in the context
         } catch (IOException | ScaleAuthorizationFailedException e) {
-           throw new ExecutionException(e);
+            throw new ExecutionException(e);
         }
         LOGGER.info("EXECUTE {} - {} FINISHED", this, context.getJobId().getValue());
     }

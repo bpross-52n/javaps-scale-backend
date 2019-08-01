@@ -48,11 +48,11 @@ public class Job implements Serializable {
         FAILED,
     }
 
+    @JsonIgnore
+    private static final long serialVersionUID = 5414953060204559319L;
+
     @JsonProperty("status")
     private String status;
-
-    @JsonIgnore
-    private final static long serialVersionUID = 5414953060204559319L;
 
     public Job() {
     }
@@ -96,7 +96,7 @@ public class Job implements Serializable {
         if (other == this) {
             return true;
         }
-        if (other instanceof Job == false) {
+        if (!(other instanceof Job)) {
             return false;
         }
         Job rhs = (Job) other;

@@ -88,13 +88,14 @@ public class RecipeType implements Serializable {
     private String archived;
 
     @JsonIgnore
-    private final static long serialVersionUID = -3294460028265008915L;
+    private static final long serialVersionUID = -3294460028265008915L;
 
     public RecipeType() {
     }
 
     public RecipeType(int id, String name, String version, String title, String description, boolean isSystem,
-            boolean isActive, Definition definition, int revision, String created, String lastModified, String archived) {
+            boolean isActive, Definition definition, int revision, String created, String lastModified,
+            String archived) {
         super();
         this.id = id;
         this.name = name;
@@ -295,7 +296,7 @@ public class RecipeType implements Serializable {
         if (other == this) {
             return true;
         }
-        if (other instanceof RecipeType == false) {
+        if (!(other instanceof RecipeType)) {
             return false;
         }
         RecipeType rhs = (RecipeType) other;

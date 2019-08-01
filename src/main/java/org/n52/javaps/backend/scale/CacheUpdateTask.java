@@ -50,20 +50,21 @@ public class CacheUpdateTask extends TimerTask {
             cache.addAlgorithms(scaleService.getAlgorithms());
             LOGGER.info("UPDATED CACHE - next run at {}", nextRun());
         } catch (IOException e) {
-            String message = String.format("CACHE UPDATE FAILED: Could not get algorithms from scale web service: %s",
-                    e.getMessage());
-            LOGGER.error(message);
-            LOGGER.debug("Stackstrace:", e);
-            LOGGER.info("Next run: {}", nextRun());
+            logFailedUpdate(e, "Could not get algorithms from scale web service");
         } catch (ScaleAuthorizationFailedException e) {
-            String message = String.format("CACHE UPDATE FAILED: Authorization information is outdated: %s",
-                    e.getMessage());
-            LOGGER.error(message);
-            LOGGER.debug("Stackstrace:", e);
-            LOGGER.info("Next run: {}", nextRun());
+            logFailedUpdate(e, "Authorization information is outdated");
         } finally {
             ONE_CACHE_UPDATE_LOCK.unlock();
         }
+    }
+
+    private void logFailedUpdate(Exception e, String details) {
+        String message = String.format("CACHE UPDATE FAILED: %s: %s",
+                details,
+                e.getMessage());
+        LOGGER.error(message);
+        LOGGER.debug("Stackstrace:", e);
+        LOGGER.info("Next run: {}", nextRun());
     }
 
     private ZonedDateTime nextRun() {

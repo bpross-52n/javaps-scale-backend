@@ -42,6 +42,9 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 })
 public class RecipeTypeRev implements Serializable {
 
+    @JsonIgnore
+    private static final long serialVersionUID = -5478867691231506657L;
+
     @JsonProperty("id")
     private long id;
 
@@ -57,13 +60,11 @@ public class RecipeTypeRev implements Serializable {
     @JsonProperty("created")
     private String created;
 
-    @JsonIgnore
-    private final static long serialVersionUID = -5478867691231506657L;
-
     public RecipeTypeRev() {
     }
 
-    public RecipeTypeRev(long id, ReferencedRecipeType recipeType, int revision, Definition definition, String created) {
+    public RecipeTypeRev(long id, ReferencedRecipeType recipeType, int revision, Definition definition,
+            String created) {
         super();
         this.id = id;
         this.recipeType = recipeType;
@@ -149,12 +150,24 @@ public class RecipeTypeRev implements Serializable {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("id", id).append("recipeType", recipeType).append("revision", revision).append("definition", definition).append("created", created).toString();
+        return new ToStringBuilder(this)
+                .append("id", id)
+                .append("recipeType", recipeType)
+                .append("revision", revision)
+                .append("definition", definition)
+                .append("created", created)
+                .toString();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(recipeType).append(id).append(definition).append(created).append(revision).toHashCode();
+        return new HashCodeBuilder()
+                .append(recipeType)
+                .append(id)
+                .append(definition)
+                .append(created)
+                .append(revision)
+                .toHashCode();
     }
 
     @Override
@@ -162,11 +175,17 @@ public class RecipeTypeRev implements Serializable {
         if (other == this) {
             return true;
         }
-        if (other instanceof RecipeTypeRev == false) {
+        if (!(other instanceof RecipeTypeRev)) {
             return false;
         }
         RecipeTypeRev rhs = (RecipeTypeRev) other;
-        return new EqualsBuilder().append(recipeType, rhs.recipeType).append(id, rhs.id).append(definition, rhs.definition).append(created, rhs.created).append(revision, rhs.revision).isEquals();
+        return new EqualsBuilder()
+                .append(recipeType, rhs.recipeType)
+                .append(id, rhs.id)
+                .append(definition, rhs.definition)
+                .append(created, rhs.created)
+                .append(revision, rhs.revision)
+                .isEquals();
     }
 
 }

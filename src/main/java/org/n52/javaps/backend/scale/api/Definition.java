@@ -43,14 +43,14 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Definition implements Serializable {
 
+    @JsonIgnore
+    private static final long serialVersionUID = 6291516404977457466L;
+
     @JsonProperty("input_data")
     private List<InputDatum> inputData = new ArrayList<>();
 
     @JsonProperty("version")
     private String version;
-
-    @JsonIgnore
-    private final static long serialVersionUID = 6291516404977457466L;
 
     public Definition() {
     }
@@ -112,7 +112,7 @@ public class Definition implements Serializable {
         if (other == this) {
             return true;
         }
-        if (other instanceof Definition == false) {
+        if (!(other instanceof Definition)) {
             return false;
         }
         Definition rhs = (Definition) other;

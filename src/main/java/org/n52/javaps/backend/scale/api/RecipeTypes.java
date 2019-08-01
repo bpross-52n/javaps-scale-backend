@@ -44,6 +44,9 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 })
 public class RecipeTypes implements Serializable {
 
+    @JsonIgnore
+    private static final long serialVersionUID = -3862307913807334087L;
+
     @JsonProperty("count")
     private long count;
 
@@ -55,9 +58,6 @@ public class RecipeTypes implements Serializable {
 
     @JsonProperty("results")
     private List<ReferencedRecipeType> results = new ArrayList<>();
-
-    @JsonIgnore
-    private final static long serialVersionUID = -3862307913807334087L;
 
     public RecipeTypes() {
     }
@@ -132,12 +132,22 @@ public class RecipeTypes implements Serializable {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("count", count).append("next", next).append("previous", previous).append("results", results).toString();
+        return new ToStringBuilder(this)
+                .append("count", count)
+                .append("next", next)
+                .append("previous", previous)
+                .append("results", results)
+                .toString();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(results).append(previous).append(count).append(next).toHashCode();
+        return new HashCodeBuilder()
+                .append(results)
+                .append(previous)
+                .append(count)
+                .append(next)
+                .toHashCode();
     }
 
     @Override
@@ -145,11 +155,16 @@ public class RecipeTypes implements Serializable {
         if (other == this) {
             return true;
         }
-        if (other instanceof RecipeTypes == false) {
+        if (!(other instanceof RecipeTypes)) {
             return false;
         }
         RecipeTypes rhs = (RecipeTypes) other;
-        return new EqualsBuilder().append(results, rhs.results).append(previous, rhs.previous).append(count, rhs.count).append(next, rhs.next).isEquals();
+        return new EqualsBuilder()
+                .append(results, rhs.results)
+                .append(previous, rhs.previous)
+                .append(count, rhs.count)
+                .append(next, rhs.next)
+                .isEquals();
     }
 
 }

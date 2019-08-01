@@ -109,7 +109,7 @@ public class Converter {
         return inputData.stream().map(this::convertToInputDescription).collect(Collectors.toSet());
     }
 
-    public TypedProcessInputDescription<?> convertToInputDescription(InputDatum inputData) {
+    private TypedProcessInputDescription<?> convertToInputDescription(InputDatum inputData) {
         OwsCode id = new OwsCode(inputData.getName());
         OwsLanguageString title = new OwsLanguageString(inputData.getName());
         OwsLanguageString abstrakt = title;
@@ -117,6 +117,18 @@ public class Converter {
         Set<OwsMetadata> metadata = Collections.emptySet();
         InputOccurence occurence = new InputOccurence(BigInteger.valueOf(1), BigInteger.valueOf(1));
         switch (inputData.getClass().getSimpleName()) {
+            case "InputDatumFile":
+                BigInteger maximumMegabytes = BigInteger.ZERO;
+                Set<Format> supportedFormats = ((InputDatumFile) inputData).getMediaTypes().stream()
+                        .map(m -> {
+                            return new Format(m);
+                        })
+                        .collect(Collectors.toSet());
+                Format defaultFormat = supportedFormats.iterator().next();
+                // FIXME switch to builder pattern
+                return new TypedComplexInputDescriptionImpl(id,
+                        title, abstrakt, keywords, metadata, occurence, defaultFormat, supportedFormats,
+                        maximumMegabytes, GenericFileDataBinding.class);
             case "InputDatumProperty":
             default:
                 // FIXME switch to builder pattern
@@ -135,18 +147,6 @@ public class Converter {
                                 null),
                         Collections.emptySet(),
                         new LiteralStringType());
-            case "InputDatumFile":
-                BigInteger maximumMegabytes = BigInteger.ZERO;
-                Set<Format> supportedFormats = ((InputDatumFile) inputData).getMediaTypes().stream()
-                        .map(m -> {
-                            return new Format(m);
-                        })
-                        .collect(Collectors.toSet());
-                Format defaultFormat = supportedFormats.iterator().next();
-                // FIXME switch to builder pattern
-                return new TypedComplexInputDescriptionImpl(id,
-                        title, abstrakt, keywords, metadata, occurence, defaultFormat, supportedFormats,
-                        maximumMegabytes, GenericFileDataBinding.class);
         }
     }
 

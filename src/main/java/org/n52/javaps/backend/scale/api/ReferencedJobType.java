@@ -46,7 +46,7 @@ public class ReferencedJobType implements Serializable {
     private String version;
 
     @JsonIgnore
-    private final static long serialVersionUID = 3031949327948349133L;
+    private static final long serialVersionUID = 3031949327948349133L;
 
     public ReferencedJobType() {
     }
@@ -102,7 +102,7 @@ public class ReferencedJobType implements Serializable {
         if (other == this) {
             return true;
         }
-        if (other instanceof ReferencedJobType == false) {
+        if (!(other instanceof ReferencedJobType)) {
             return false;
         }
         ReferencedJobType rhs = (ReferencedJobType) other;

@@ -59,7 +59,7 @@ public class ScaleRepositoryCache {
 
     public Optional<TypedProcessDescription> getProcessDescription(OwsCode id) {
         ScaleAlgorithm algorithm = algorithms.get(id);
-        return Optional.ofNullable(algorithm != null?algorithm.getDescription():null);
+        return Optional.ofNullable(algorithm != null ? algorithm.getDescription() : null);
     }
 
     public boolean contains(OwsCode id) {

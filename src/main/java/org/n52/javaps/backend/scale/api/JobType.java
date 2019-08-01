@@ -44,9 +44,10 @@ public class JobType implements Serializable {
 
     @JsonProperty("name")
     private String name;
+@JsonIgnoreProperties(ignoreUnknown = true)
 
     @JsonIgnore
-    private final static long serialVersionUID = 3031949327948349133L;
+    private static final long serialVersionUID = -3294460028265008915L;
 
     public JobType() {
     }
@@ -102,11 +103,13 @@ public class JobType implements Serializable {
         if (other == this) {
             return true;
         }
-        if (other instanceof JobType == false) {
+        if (!(other instanceof JobType)) {
             return false;
         }
         JobType rhs = (JobType) other;
-        return new EqualsBuilder().append(name, rhs.name).append(version, rhs.version).isEquals();
+        return new EqualsBuilder()
+                .append(interFace, rhs.interFace)
+                .isEquals();
     }
 
 }

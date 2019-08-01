@@ -1,18 +1,37 @@
+/*
+ * Copyright 2019-2019 52°North Initiative for Geospatial Open Source
+ * Software GmbH
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.n52.javaps.backend.scale.api;
 
+import java.io.Serializable;
 import java.util.List;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 /**
- * Implementation of http://gmudcos.hopto.org/service/scale/docs/architecture/jobs/recipe_data.html#recipe-data-specification-version-1-0
+ * Implementation of <a href="http://gmudcos.hopto.org/service/scale/docs/architecture/jobs/recipe_data.html
+ *#recipe-data-specification-version-1-0">recipe-data-specification-version-1-0</a>
  *
  * @author <a href="mailto:e.h.juerrens@52north.org">J&uuml;rrens, Eike Hinderk</a>
  *
@@ -25,16 +44,19 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
         "input_data",
         "workspace_id"
 })
-public class RecipeData {
+public class RecipeData implements Serializable {
+
+    @JsonIgnore
+    private static final long serialVersionUID = -8307470273788163750L;
 
     @JsonProperty("version")
     private String version = "1.0";
 
     @JsonProperty("input_data")
-    private List<InputData>  inputData  = null;
+    private List<InputData> inputData;
 
     @JsonProperty("workspace_id")
-    private Integer workspaceId = null;
+    private Integer workspaceId;
 
     @JsonProperty("version")
     public String getVersion() {
@@ -104,7 +126,7 @@ public class RecipeData {
         if (other == this) {
             return true;
         }
-        if (other instanceof RecipeData == false) {
+        if (!(other instanceof RecipeData)) {
             return false;
         }
         RecipeData rhs = (RecipeData) other;
@@ -132,11 +154,15 @@ public class RecipeData {
      *  <ul><li><code>name</code>: String</li><li><code>file_ids</code>: List&lt;Integer></li></ul>
      * </ul>
      *
-     * Source: {@link http://gmudcos.hopto.org/service/scale/docs/architecture/jobs/job_data.html#job-data-specification-version-1-0}
+     * <a href="http://gmudcos.hopto.org/service/scale/docs/architecture/jobs/job_data.html
+     *#job-data-specification-version-1-0">Source</a>
      *
      */
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    public static class InputData {
+    public static class InputData implements Serializable {
+
+        @JsonIgnore
+        private static final long serialVersionUID = 6747834919867377371L;
 
         @JsonProperty("name")
         private String name;
@@ -149,7 +175,7 @@ public class RecipeData {
         private Integer fileId;
 
         @JsonProperty("file_ids")
-        @JsonInclude(value=Include.NON_EMPTY, content=Include.NON_NULL)
+        @JsonInclude(value = Include.NON_EMPTY, content = Include.NON_NULL)
         private List<Integer> fileIds;
 
         @JsonProperty("name")
@@ -237,7 +263,7 @@ public class RecipeData {
             if (other == this) {
                 return true;
             }
-            if (other instanceof InputData == false) {
+            if (!(other instanceof InputData)) {
                 return false;
             }
             InputData rhs = (InputData) other;

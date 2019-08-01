@@ -39,14 +39,14 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 })
 public class RecipeInput implements Serializable {
 
+    @JsonIgnore
+    private static final long serialVersionUID = -4640730651844868374L;
+
     @JsonProperty("job_input")
     private String jobInput;
 
     @JsonProperty("recipe_input")
     private String recipeInput;
-
-    @JsonIgnore
-    private final static long serialVersionUID = -4640730651844868374L;
 
     public RecipeInput() {
     }
@@ -102,7 +102,7 @@ public class RecipeInput implements Serializable {
         if (other == this) {
             return true;
         }
-        if (other instanceof RecipeInput == false) {
+        if (!(other instanceof RecipeInput)) {
             return false;
         }
         RecipeInput rhs = (RecipeInput) other;

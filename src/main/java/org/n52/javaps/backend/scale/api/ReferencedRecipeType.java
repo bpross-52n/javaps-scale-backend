@@ -38,17 +38,17 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
     "id",
     "is_active"
 })
-@JsonIgnoreProperties(ignoreUnknown=true)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ReferencedRecipeType implements Serializable {
+
+    @JsonIgnore
+    private static final long serialVersionUID = 1000474927307839313L;
 
     @JsonProperty("id")
     private int id;
 
     @JsonProperty("is_active")
     private boolean isActive;
-
-    @JsonIgnore
-    private final static long serialVersionUID = 1000474927307839313L;
 
     public ReferencedRecipeType() {
     }
@@ -74,7 +74,7 @@ public class ReferencedRecipeType implements Serializable {
         return this;
     }
 
-     @JsonProperty("is_active")
+    @JsonProperty("is_active")
     public boolean isIsActive() {
         return isActive;
     }
@@ -110,7 +110,7 @@ public class ReferencedRecipeType implements Serializable {
         if (other == this) {
             return true;
         }
-        if (other instanceof ReferencedRecipeType == false) {
+        if (!(other instanceof ReferencedRecipeType)) {
             return false;
         }
         ReferencedRecipeType rhs = (ReferencedRecipeType) other;
