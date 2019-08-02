@@ -16,74 +16,35 @@
  */
 package org.n52.javaps.backend.scale.api;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
+import org.n52.javaps.backend.scale.api.RecipeData.InputData;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 /**
- * Implementation of <a href="http://gmudcos.hopto.org/service/scale/docs/architecture/jobs/recipe_definition.html
- *#architecture-jobs-recipe-definition-spec">Recipe Definition Specification Version 1.0</a>.
+ * Abstract superclass for {@link JobData} and {@link RecipeData}
  *
  * @author <a href="mailto:e.h.juerrens@52north.org">J&uuml;rrens, Eike Hinderk</a>
  *
  * @since 1.4.0
  *
- * @see InputDatum
- * @see InputDatumFile
- * @see InputDatumFiles
- * @see InputDatumProperty
- *
+ * @see JobData
+ * @see RecipeData
  */
-@JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder({
-    "input_data",
-    "version"
-})
-@JsonIgnoreProperties(ignoreUnknown = true)
-public class Definition implements Serializable {
-
-    @JsonIgnore
-    private static final long serialVersionUID = 6291516404977457466L;
-
-    @JsonProperty("input_data")
-    private List<InputDatum> inputData = new ArrayList<>();
+public abstract class TaskData {
 
     @JsonProperty("version")
-    private String version;
+    protected String version = "1.0";
 
-    public Definition() {
-    }
+    @JsonProperty("input_data")
+    protected List<InputData> inputData;
 
-    public Definition(List<InputDatum> inputData, String version) {
+    public TaskData() {
         super();
-        this.inputData = inputData;
-        this.version = version;
-    }
-
-    @JsonProperty("input_data")
-    public List<InputDatum> getInputData() {
-        return inputData;
-    }
-
-    @JsonProperty("input_data")
-    public void setInputData(List<InputDatum> inputData) {
-        this.inputData = inputData;
-    }
-
-    public Definition withInputData(List<InputDatum> inputData) {
-        this.inputData = inputData;
-        return this;
     }
 
     @JsonProperty("version")
@@ -96,16 +57,31 @@ public class Definition implements Serializable {
         this.version = version;
     }
 
-    public Definition withVersion(String version) {
+    public TaskData withVersion(String version) {
         this.version = version;
+        return this;
+    }
+
+    @JsonProperty("input_data")
+    public List<InputData> getInputData() {
+        return inputData;
+    }
+
+    @JsonProperty("input_data")
+    public void setInputData(List<InputData> inputData) {
+        this.inputData = inputData;
+    }
+
+    public TaskData withInputData(List<InputData> inputData) {
+        this.inputData = inputData;
         return this;
     }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this)
-                .append("inputData", inputData)
                 .append("version", version)
+                .append("inputData", inputData)
                 .toString();
     }
 
@@ -122,19 +98,14 @@ public class Definition implements Serializable {
         if (other == this) {
             return true;
         }
-        if (!(other instanceof Definition)) {
+        if (!(other instanceof TaskData)) {
             return false;
         }
-        Definition rhs = (Definition) other;
+        TaskData rhs = (TaskData) other;
         return new EqualsBuilder()
                 .append(inputData, rhs.inputData)
                 .append(version, rhs.version)
                 .isEquals();
-    }
-
-    public List<OutputDatum> getOutputData() {
-        // TODO Auto-generated method stub -> implement me!
-        return Collections.emptyList();
     }
 
 }

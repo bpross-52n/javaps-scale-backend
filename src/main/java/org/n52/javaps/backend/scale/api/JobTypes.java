@@ -31,9 +31,15 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 /**
+ * See  <a href="http://gmudcos.hopto.org/service/scale/docs/rest/job_type.html
+ *#rest-job-type-list">REST API Job Type Services: Job Type List</a>.
+ *
  * @author <a href="mailto:e.h.juerrens@52north.org">J&uuml;rrens, Eike Hinderk</a>
  *
  * @since 1.4.0
+ *
+ * @see JobType
+ * @see JobTypeReference
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
@@ -57,12 +63,12 @@ public class JobTypes implements Serializable {
     private URL previous;
 
     @JsonProperty("results")
-    private List<ReferencedJobType> results = new ArrayList<>();
+    private List<JobTypeReference> results = new ArrayList<>();
 
     public JobTypes() {
     }
 
-    public JobTypes(long count, URL next, URL previous, List<ReferencedJobType> results) {
+    public JobTypes(long count, URL next, URL previous, List<JobTypeReference> results) {
         super();
         this.count = count;
         this.next = next;
@@ -116,16 +122,16 @@ public class JobTypes implements Serializable {
     }
 
     @JsonProperty("results")
-    public List<ReferencedJobType> getResults() {
+    public List<JobTypeReference> getResults() {
         return results;
     }
 
     @JsonProperty("results")
-    public void setResults(List<ReferencedJobType> results) {
+    public void setResults(List<JobTypeReference> results) {
         this.results = results;
     }
 
-    public JobTypes withResults(List<ReferencedJobType> results) {
+    public JobTypes withResults(List<JobTypeReference> results) {
         this.results = results;
         return this;
     }

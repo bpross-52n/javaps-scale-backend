@@ -30,9 +30,13 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 /**
+ * See <a href="http://gmudcos.hopto.org/service/scale/docs/rest/recipe.html
+ *#rest-recipe-details">REST API Recipe Services: Recipe Details</a>
+ *
  * @author <a href="mailto:e.h.juerrens@52north.org">J&uuml;rrens, Eike Hinderk</a>
  *
  * @since 1.4.0
+ *
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
@@ -44,7 +48,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
     "jobs"
 })
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Recipe implements Serializable {
+public class Recipe extends Task implements Serializable {
 
     @JsonIgnore
     private static final long serialVersionUID = 3110533031488141475L;

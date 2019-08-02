@@ -23,13 +23,15 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.n52.javaps.backend.scale.ScaleAlgorithm;
+import org.n52.javaps.backend.scale.ScaleJob;
+import org.n52.javaps.backend.scale.ScaleRecipe;
 import org.n52.javaps.backend.scale.ScaleServiceController;
 import org.n52.javaps.backend.scale.api.InputDatum;
 import org.n52.javaps.backend.scale.api.InputDatumFile;
 import org.n52.javaps.backend.scale.api.JobType;
 import org.n52.javaps.backend.scale.api.OutputDatum;
 import org.n52.javaps.backend.scale.api.RecipeType;
-import org.n52.javaps.backend.scale.api.Task;
+import org.n52.javaps.backend.scale.api.TaskType;
 import org.n52.javaps.description.TypedProcessInputDescription;
 import org.n52.javaps.description.TypedProcessOutputDescription;
 import org.n52.javaps.description.impl.TypedComplexInputDescriptionImpl;
@@ -49,9 +51,22 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * Converts the JSON jackson POJOs to javaPS based objects:
+ *
+ * <ul>
+ * <li> {@link RecipeType} &rarr; {@link ScaleRecipe} </li>
+ * <li> {@link JobType} &rarr; {@link ScaleJob} </li>
+ * </ul>
+ *
  * @author <a href="mailto:e.h.juerrens@52north.org">J&uuml;rrens, Eike Hinderk</a>
  *
  * @since 1.4.0
+ *
+ * @see ScaleAlgorithm
+ * @see ScaleRecipe
+ * @see ScaleJob
+ * @see RecipeType
+ * @see JobType
  */
 public class Converter {
 
@@ -71,7 +86,7 @@ public class Converter {
                 recipeType.getDefinition().getInputData());
         Set<TypedProcessOutputDescription<?>> outputs = convertToOutputDescriptions(
                 recipeType.getDefinition().getOutputData());
-        return new ScaleAlgorithm(scaleService,
+        return new ScaleRecipe(scaleService,
                 recipeType.getId(),
                 createId(recipeType),
                 createTitle(recipeType),
@@ -80,10 +95,7 @@ public class Converter {
                 Collections.emptySet(),
                 inputs,
                 outputs,
-                createVersion(recipeType),
-                true,
-                true,
-                ScaleAlgorithm.Type.RECIPE);
+                createVersion(recipeType));
     }
 
     public ScaleAlgorithm convertToAlgorithm(JobType jobType) {
@@ -94,7 +106,7 @@ public class Converter {
                 convertToInputDescriptions(jobType.getInterface().getInputData());
         Set<TypedProcessOutputDescription<?>> outputs =
                 convertToOutputDescriptions(jobType.getInterface().getOutputData());
-        return new ScaleAlgorithm(scaleService,
+        return new ScaleJob(scaleService,
                 jobType.getId(),
                 createId(jobType),
                 createTitle(jobType),
@@ -103,36 +115,33 @@ public class Converter {
                 Collections.emptySet(),
                 inputs,
                 outputs,
-                createVersion(jobType),
-                true,
-                true,
-                ScaleAlgorithm.Type.JOB);
+                createVersion(jobType));
     }
 
-    private OwsLanguageString createAbstract(Task task) {
-        OwsLanguageString abstrakt = new OwsLanguageString(task.getDescription());
+    private OwsLanguageString createAbstract(TaskType taskType) {
+        OwsLanguageString abstrakt = new OwsLanguageString(taskType.getDescription());
         LOGGER.trace("Created abstrakt: '{}'", abstrakt);
         return abstrakt;
     }
 
-    private OwsCode createId(Task task) {
+    private OwsCode createId(TaskType taskType) {
         return new OwsCode(String.format("%s-%s-%s-r%s",
                 ScaleAlgorithm.PREFIX,
-                task.getName(),
-                task.getVersion(),
-                task.getRevision()));
+                taskType.getName(),
+                taskType.getVersion(),
+                taskType.getRevision()));
     }
 
-    private OwsLanguageString createTitle(Task task) {
-        OwsLanguageString title = new OwsLanguageString(task.getTitle());
+    private OwsLanguageString createTitle(TaskType taskType) {
+        OwsLanguageString title = new OwsLanguageString(taskType.getTitle());
         LOGGER.trace("Created title: '{}'", title);
         return title;
     }
 
-    private String createVersion(Task task) {
+    private String createVersion(TaskType taskType) {
         return String.format("%s-r%s",
-                task.getVersion(),
-                task.getRevision());
+                taskType.getVersion(),
+                taskType.getRevision());
     }
 
     private Set<TypedProcessOutputDescription<?>> convertToOutputDescriptions(List<OutputDatum> outputData) {

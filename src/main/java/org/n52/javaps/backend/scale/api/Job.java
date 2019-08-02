@@ -30,16 +30,20 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 /**
+ * See <a href="http://gmudcos.hopto.org/service/scale/docs/rest/job.html
+ *#rest-job-details">REST API job details</a>.
+ *
  * @author <a href="mailto:e.h.juerrens@52north.org">J&uuml;rrens, Eike Hinderk</a>
  *
  * @since 1.4.0
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
-    "status"
+    "status",
+    "ended"
 })
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Job implements Serializable {
+public class Job extends Task implements Serializable {
 
     public enum Status {
         BLOCKED,
@@ -54,12 +58,16 @@ public class Job implements Serializable {
     @JsonProperty("status")
     private String status;
 
+    @JsonProperty("ended")
+    private String ended;
+
     public Job() {
     }
 
-    public Job(List<Object> dependencies, String status) {
+    public Job(List<Object> dependencies, String status, String ended) {
         super();
         this.status = status;
+        this.ended = ended;
     }
 
     @JsonProperty("status")
@@ -77,10 +85,30 @@ public class Job implements Serializable {
         return this;
     }
 
+    public String getCompleted() {
+        return ended;
+    }
+
+    @JsonProperty("ended")
+    public String getEnded() {
+        return ended;
+    }
+
+    @JsonProperty("ended")
+    public void setEnded(String ended) {
+        this.ended = ended;
+    }
+
+    public Job withEnded(String ended) {
+        this.ended = ended;
+        return this;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this)
                 .append("status", status)
+                .append("compleendedted", ended)
                 .toString();
     }
 
@@ -88,6 +116,7 @@ public class Job implements Serializable {
     public int hashCode() {
         return new HashCodeBuilder()
                 .append(status)
+                .append(ended)
                 .toHashCode();
     }
 
@@ -102,6 +131,7 @@ public class Job implements Serializable {
         Job rhs = (Job) other;
         return new EqualsBuilder()
                 .append(status, rhs.status)
+                .append(ended, rhs.ended)
                 .isEquals();
     }
 

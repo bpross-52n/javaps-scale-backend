@@ -16,8 +16,10 @@
  */
 package org.n52.javaps.backend.scale;
 
+import org.n52.javaps.backend.scale.api.Job;
 import org.n52.javaps.backend.scale.api.JobType;
 import org.n52.javaps.backend.scale.api.JobTypes;
+import org.n52.javaps.backend.scale.api.QueueJob;
 import org.n52.javaps.backend.scale.api.QueueRecipe;
 import org.n52.javaps.backend.scale.api.Recipe;
 import org.n52.javaps.backend.scale.api.RecipeType;
@@ -32,6 +34,9 @@ import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 /**
+ * Interface for accessing a <a href="http://gmudcos.hopto.org/service/scale/
+ *docs/rest/index.html">Scale REST API</a>.
+ *
  * @author <a href="mailto:e.h.juerrens@52north.org">J&uuml;rrens, Eike Hinderk</a>
  *
  * @since 1.4.0
@@ -39,9 +44,6 @@ import retrofit2.http.Query;
 public interface ScaleService {
 
     String QUERY_PARAM_KEY_PAGE = "page";
-
-    @GET("recipes/{id}/")
-    Call<Recipe> getRecipe(@Header("Cookie") String dcosAuthCookie, @Path("id") int id);
 
     @GET("recipe-types/")
     Call<RecipeTypes> getRecipeTypes(@Header("Cookie") String dcosAuthCookie);
@@ -52,9 +54,6 @@ public interface ScaleService {
     @GET("recipe-types/{id}/")
     Call<RecipeType> getRecipeType(@Header("Cookie") String dcosAuthCookie, @Path("id") int id);
 
-    @POST("queue/new-recipe/")
-    Call<Void> schedule(@Header("Cookie") String dcosAuthCookie, @Body QueueRecipe queueRecipe);
-
     @GET("job-types/")
     Call<JobTypes> getJobTypes(@Header("Cookie") String dcosAuthCookie);
 
@@ -64,5 +63,15 @@ public interface ScaleService {
     @GET("job-types/{id}/")
     Call<JobType> getJobType(@Header("Cookie") String dcosAuthCookie, @Path("id") int id);
 
+    @POST("queue/new-recipe/")
+    Call<Void> schedule(@Header("Cookie") String dcosAuthCookie, @Body QueueRecipe queueRecipe);
 
+    @POST("queue/new-job/")
+    Call<Void> schedule(@Header("Cookie") String dcosAuthCookie, @Body QueueJob queueJob);
+
+    @GET("recipes/{id}/")
+    Call<Recipe> getRecipe(@Header("Cookie") String dcosAuthCookie, @Path("id") int id);
+
+    @GET("jobs/{id}/")
+    Call<Job> getJob(@Header("Cookie") String dcosAuthCookie, @Path("id") int id);
 }

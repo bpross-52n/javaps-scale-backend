@@ -16,42 +16,54 @@
  */
 package org.n52.javaps.backend.scale.api;
 
+import java.io.Serializable;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 /**
- * Implementation of <code>files</code> <code>input_data</code> for {@link Definition}
+ * Implementation of <a href="http://gmudcos.hopto.org/service/scale/docs/architecture/jobs/job_data.html
+ *#job-data-specification-version-1-0">Job Data Specification Version 1.0</a>.
  *
  * @author <a href="mailto:e.h.juerrens@52north.org">J&uuml;rrens, Eike Hinderk</a>
  *
  * @since 1.4.0
  *
- * @see Definition
- * @see InputDatum
- * @see InputDatumFile
- * @see InputDatumProperty
+ * @see TaskData
+ * @see RecipeData
+ *
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
-    "name",
-    "required",
-    "media_types"
+        "version",
+        "input_data",
+        "output_data"
 })
-@JsonIgnoreProperties(ignoreUnknown = true)
-public class InputDatumFiles extends InputDatumFile {
+public class JobData extends TaskData implements Serializable {
 
     @JsonIgnore
-    private static final long serialVersionUID = -1953971720226875138L;
+    private static final long serialVersionUID = -347491433199918030L;
 
-    public InputDatumFiles() {
+    @JsonProperty("output_data")
+    private List<OutputDatum> outputData;
+
+    @JsonProperty("output_data")
+    public List<OutputDatum> getOutputData() {
+        return outputData;
     }
 
-    public InputDatumFiles(String name, boolean required, List<String> mediaTypes) {
-        super(name, required, mediaTypes);
+    @JsonProperty("output_data")
+    public void setOutputData(List<OutputDatum> outputData) {
+        this.outputData = outputData;
     }
+
+    public JobData withOutputData(List<OutputDatum> outputData) {
+        this.outputData = outputData;
+        return this;
+    }
+
 
 }

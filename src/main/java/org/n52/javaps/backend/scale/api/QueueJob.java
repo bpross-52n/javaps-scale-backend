@@ -23,85 +23,79 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 /**
+ * See <a href="http://gmudcos.hopto.org/service/scale/docs/rest/queue.html">
+ * REST API Queue Services: Queue New Job</a>.
+ *
  * @author <a href="mailto:e.h.juerrens@52north.org">J&uuml;rrens, Eike Hinderk</a>
  *
  * @since 1.4.0
+ *
+ * @see QueueRecipe
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
-    "id",
-    "is_active"
+    "job_type_id",
+    "job_data"
 })
-@JsonIgnoreProperties(ignoreUnknown = true)
-public class ReferencedJobType implements Serializable {
+public class QueueJob implements Serializable {
 
     @JsonIgnore
-    private static final long serialVersionUID = 3031949327948349133L;
+    private static final long serialVersionUID = -9164919847349950376L;
 
-    @JsonProperty("id")
-    private int id;
+    @JsonProperty("job_type_id")
+    private Integer jobTypeId;
 
-    @JsonProperty("is_active")
-    private boolean isActive;
+    @JsonProperty("job_data")
+    private JobData jobData;
 
-    public ReferencedJobType() {
-    }
-
-    public ReferencedJobType(int id, boolean isActive) {
-        super();
-        this.id = id;
-        this.isActive = isActive;
-    }
-
-    @JsonProperty("id")
-    public int getId() {
-        return id;
-    }
-
-    @JsonProperty("id")
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public ReferencedJobType withId(int id) {
-        this.id = id;
+    public QueueJob withJobTypeId(Integer jobTypeId) {
+        this.jobTypeId = jobTypeId;
         return this;
     }
 
-    @JsonProperty("is_active")
-    public boolean isIsActive() {
-        return isActive;
+    @JsonProperty("job_type_id")
+    public Integer getJobTypeId() {
+        return jobTypeId;
     }
 
-    @JsonProperty("is_active")
-    public void setIsActive(boolean isActive) {
-        this.isActive = isActive;
+    @JsonProperty("job_type_id")
+    public void setJobTypeId(Integer jobTypeId) {
+        this.jobTypeId = jobTypeId;
     }
 
-    public ReferencedJobType withIsActive(boolean isActive) {
-        this.isActive = isActive;
+    public QueueJob withJobData(JobData jobData) {
+        this.jobData = jobData;
         return this;
+    }
+
+    @JsonProperty("job_data")
+    public JobData getJobData() {
+        return jobData;
+    }
+
+    @JsonProperty("job_data")
+    public void setJobData(JobData jobData) {
+        this.jobData = jobData;
     }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this)
-                .append("id", id)
-                .append("isActive", isActive)
+                .append("jobTypeId", jobTypeId)
+                .append("jobData", jobData)
                 .toString();
     }
 
     @Override
     public int hashCode() {
         return new HashCodeBuilder()
-                .append(isActive)
-                .append(id)
+                .append(jobTypeId)
+                .append(jobData)
                 .toHashCode();
     }
 
@@ -110,14 +104,15 @@ public class ReferencedJobType implements Serializable {
         if (other == this) {
             return true;
         }
-        if (!(other instanceof ReferencedJobType)) {
+        if (!(other instanceof QueueJob)) {
             return false;
         }
-        ReferencedJobType rhs = (ReferencedJobType) other;
+        QueueJob rhs = (QueueJob) other;
         return new EqualsBuilder()
-                .append(isActive, rhs.isActive)
-                .append(id, rhs.id)
+                .append(jobTypeId, rhs.jobTypeId)
+                .append(jobData, rhs.jobData)
                 .isEquals();
     }
+
 
 }

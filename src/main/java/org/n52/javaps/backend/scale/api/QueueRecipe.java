@@ -28,9 +28,14 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 /**
+ * See <a href="http://gmudcos.hopto.org/service/scale/docs/rest/queue.html">
+ * REST API Queue Services: Queue New Recipe</a>.
+ *
  * @author <a href="mailto:e.h.juerrens@52north.org">J&uuml;rrens, Eike Hinderk</a>
  *
  * @since 1.4.0
+ *
+ * @see QueueJob
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
@@ -69,7 +74,7 @@ public class QueueRecipe implements Serializable {
     }
 
     @JsonProperty("recipe_data")
-    public RecipeData getRecipeData() {
+    public TaskData getRecipeData() {
         return recipeData;
     }
 

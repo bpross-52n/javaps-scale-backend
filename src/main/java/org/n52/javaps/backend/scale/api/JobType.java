@@ -29,9 +29,14 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 /**
+ * See  <a href="http://gmudcos.hopto.org/service/scale/docs/rest/job_type.html
+ *#rest-job-type-details">REST API Job Type Services: Job Type Details</a>.
+ *
  * @author <a href="mailto:e.h.juerrens@52north.org">J&uuml;rrens, Eike Hinderk</a>
  *
  * @since 1.4.0
+ *
+ * @see Interface
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
@@ -49,7 +54,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
     "interface"
 })
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class JobType extends Task implements Serializable {
+public class JobType extends TaskType implements Serializable {
 
     @JsonIgnore
     private static final long serialVersionUID = -3294460028265008915L;

@@ -20,6 +20,17 @@ import java.io.Serializable;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+/**
+ * @author <a href="mailto:e.h.juerrens@52north.org">J&uuml;rrens, Eike Hinderk</a>
+ *
+ * @since 1.4.0
+ *
+ * @see Definition
+ * @see InputDatum
+ * @see InputDatumFile
+ * @see InputDatumFiles
+ *
+ */
 public class InputDatumProperty extends InputDatum implements Serializable {
 
     @JsonIgnore

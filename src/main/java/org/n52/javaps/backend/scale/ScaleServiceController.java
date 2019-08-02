@@ -19,6 +19,7 @@ package org.n52.javaps.backend.scale;
 import java.io.File;
 import java.io.IOException;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -33,12 +34,14 @@ import org.n52.javaps.backend.scale.api.Job;
 import org.n52.javaps.backend.scale.api.JobType;
 import org.n52.javaps.backend.scale.api.JobTypes;
 import org.n52.javaps.backend.scale.api.Jobs;
+import org.n52.javaps.backend.scale.api.QueueJob;
 import org.n52.javaps.backend.scale.api.QueueRecipe;
 import org.n52.javaps.backend.scale.api.Recipe;
 import org.n52.javaps.backend.scale.api.RecipeType;
 import org.n52.javaps.backend.scale.api.RecipeTypes;
-import org.n52.javaps.backend.scale.api.ReferencedJobType;
-import org.n52.javaps.backend.scale.api.ReferencedRecipeType;
+import org.n52.javaps.backend.scale.api.JobTypeReference;
+import org.n52.javaps.backend.scale.api.RecipeTypeReference;
+import org.n52.javaps.backend.scale.api.Task;
 import org.n52.javaps.backend.scale.api.util.Converter;
 import org.n52.javaps.backend.scale.api.util.ScaleAuthorizationFailedException;
 import org.slf4j.Logger;
@@ -74,6 +77,24 @@ public class ScaleServiceController implements Constructable, Destroyable {
         LOGGER.info("NEW {}", this);
     }
 
+    @Override
+    public void init() {
+        LOGGER.trace("START INIT {}", this);
+        Optional<URL> baseUrl = configuration.getWebserverEndpoint();
+        if (!baseUrl.isPresent()) {
+            LOGGER.error("Could not get base url of scale webserver -> cancel init.");
+            // FIXME mark as not working!
+        } else {
+            retrofit = new Retrofit.Builder()
+                    .baseUrl(baseUrl.get())
+                    .addConverterFactory(JacksonConverterFactory.create())
+                    .build();
+            scaleService = retrofit.create(ScaleService.class);
+            converter = new Converter(this);
+        }
+        LOGGER.info("INIT {}", this);
+    }
+
     public List<ScaleAlgorithm> getAlgorithms() throws IOException, ScaleAuthorizationFailedException {
         List<ScaleAlgorithm> result = new LinkedList<>();
         processRecipeTypes(result);
@@ -107,7 +128,7 @@ public class ScaleServiceController implements Constructable, Destroyable {
                 throw new IOException(jobTypesResponse.errorBody().toString());
             }
             jobTypes = jobTypesResponse.body();
-            for (ReferencedJobType jobReference : jobTypes.getResults()) {
+            for (JobTypeReference jobReference : jobTypes.getResults()) {
                 if (!jobReference.isIsActive()) {
                     continue;
                 }
@@ -152,7 +173,7 @@ public class ScaleServiceController implements Constructable, Destroyable {
                 throw new IOException(response.errorBody().toString());
             }
             recipeTypes = response.body();
-            for (ReferencedRecipeType recipeReference : recipeTypes.getResults()) {
+            for (RecipeTypeReference recipeReference : recipeTypes.getResults()) {
                 if (!recipeReference.isIsActive()) {
                     continue;
                 }
@@ -175,11 +196,31 @@ public class ScaleServiceController implements Constructable, Destroyable {
         } while (recipeTypes.getNext() != null);
     }
 
+    private String getAuthCookieContent() {
+        return String.format("dcos-acs-auth-cookie=%s; dcos-acs-info-cookie=%s",
+                configuration.getJWTAuthToken().orElse(ScaleConfiguration.CONFIGURATION_VALUE_NOT_SPECIFIED),
+                configuration.getInfoCookie().orElse(ScaleConfiguration.CONFIGURATION_VALUE_NOT_SPECIFIED));
+    }
+
+    private boolean isUnauthorized(Response<?> response) {
+        return response.code() == HttpURLConnection.HTTP_UNAUTHORIZED;
+    }
+
     public int queue(QueueRecipe queueRecipe) throws IOException, ScaleAuthorizationFailedException {
         Call<Void> call = scaleService.schedule(getAuthCookieContent(), queueRecipe);
+        return executeScheduleCall(call);
+    }
+
+    public int queue(QueueJob queueJob) throws IOException, ScaleAuthorizationFailedException {
+        Call<Void> call = scaleService.schedule(getAuthCookieContent(), queueJob);
+        return executeScheduleCall(call);
+    }
+
+    private int executeScheduleCall(Call<Void> call) throws IOException, ScaleAuthorizationFailedException,
+            IllegalArgumentException, NumberFormatException, MalformedURLException {
         Response<Void> response = call.execute();
         if (!response.isSuccessful()) {
-            LOGGER.error("Could not queue recipe!\n{}", response.errorBody());
+            LOGGER.error("Could not queue task!\n{}", response.errorBody());
             if (isUnauthorized(response)) {
                 throw new ScaleAuthorizationFailedException();
             }
@@ -195,34 +236,6 @@ public class ScaleServiceController implements Constructable, Destroyable {
         return Integer.parseInt(new File(new URL(locations.get(0)).getPath()).getName());
     }
 
-    private boolean isUnauthorized(Response<?> response) {
-        return response.code() == HttpURLConnection.HTTP_UNAUTHORIZED;
-    }
-
-    private String getAuthCookieContent() {
-        return String.format("dcos-acs-auth-cookie=%s; dcos-acs-info-cookie=%s",
-                configuration.getJWTAuthToken().orElse(ScaleConfiguration.CONFIGURATION_VALUE_NOT_SPECIFIED),
-                configuration.getInfoCookie().orElse(ScaleConfiguration.CONFIGURATION_VALUE_NOT_SPECIFIED));
-    }
-
-    @Override
-    public void init() {
-        LOGGER.trace("START INIT {}", this);
-        Optional<URL> baseUrl = configuration.getWebserverEndpoint();
-        if (!baseUrl.isPresent()) {
-            LOGGER.error("Could not get base url of scale webserver -> cancel init.");
-            // FIXME mark as not working!
-        } else {
-            retrofit = new Retrofit.Builder()
-                    .baseUrl(baseUrl.get())
-                    .addConverterFactory(JacksonConverterFactory.create())
-                    .build();
-            scaleService = retrofit.create(ScaleService.class);
-            converter = new Converter(this);
-        }
-        LOGGER.info("INIT {}", this);
-    }
-
     public Recipe waitForRecipe(int queuedRecipeId) throws IOException, ScaleAuthorizationFailedException {
         // TODO add max wait time!?
         Recipe recipe = null;
@@ -232,7 +245,7 @@ public class ScaleServiceController implements Constructable, Destroyable {
             Call<Recipe> call = scaleService.getRecipe(getAuthCookieContent(), queuedRecipeId);
             Response<Recipe> response = call.execute();
             if (!response.isSuccessful()) {
-                LOGGER.error("Requesting recipes from scale web server failed!\n{}", response.errorBody());
+                LOGGER.error("Requesting recipe from scale web server failed!\n{}", response.errorBody());
                 if (isUnauthorized(response)) {
                     throw new ScaleAuthorizationFailedException();
                 }
@@ -241,21 +254,7 @@ public class ScaleServiceController implements Constructable, Destroyable {
             recipe = response.body();
             // if completed is null
             if (recipe.getCompleted() == null) {
-                // for each job
-                for (Jobs job : recipe.getJobs()) {
-                    // if status not failed or not completed or not blocked
-                    if (requiresFurtherWaiting(job.getJob().getStatus())) {
-                        // continue (sleep n seconds)
-                        // n needs to be configured
-                        try {
-                            Thread.sleep(configuration.getWaitingSleepInSeconds() * 1000);
-                        } catch (InterruptedException e) {
-                            LOGGER.trace("Sleep interrupted", e);
-                        }
-                        continueWaiting = true;
-                        break;
-                    }
-                }
+                continueWaiting = checkForSleep(recipe);
             } else {
                 break;
             }
@@ -263,10 +262,60 @@ public class ScaleServiceController implements Constructable, Destroyable {
         return recipe;
     }
 
-    private boolean requiresFurtherWaiting(String status) {
-        return !Job.Status.BLOCKED.name().equals(status) &&
+    public Job waitForJob(int queuedJobId) throws IOException, ScaleAuthorizationFailedException {
+        // TODO add max wait time!?
+        Job job = null;
+        boolean continueWaiting;
+        do {
+            continueWaiting = false;
+            Call<Job> call = scaleService.getJob(getAuthCookieContent(), queuedJobId);
+            Response<Job> response = call.execute();
+            if (!response.isSuccessful()) {
+                LOGGER.error("Requesting job from scale web server failed!\n{}", response.errorBody());
+                if (isUnauthorized(response)) {
+                    throw new ScaleAuthorizationFailedException();
+                }
+
+            }
+            job = response.body();
+            // if completed is null
+            if (job.getCompleted() == null) {
+                continueWaiting = checkJobForSleep(job);
+            } else {
+                break;
+            }
+        } while (continueWaiting);
+        return job;
+    }
+
+    private boolean checkForSleep(Task task) {
+        if (task instanceof Recipe) {
+            // for each job
+            for (Jobs job : ((Recipe) task).getJobs()) {
+                checkJobForSleep(job.getJob());
+            }
+        } else if (task instanceof Job) {
+            checkJobForSleep((Job) task);
+        }
+        return false;
+    }
+
+    private boolean checkJobForSleep(Job job) {
+        // if status not failed or not completed or not blocked
+        String status = job.getStatus();
+        if (!Job.Status.BLOCKED.name().equals(status) &&
                 !Job.Status.FAILED.name().equals(status) &&
-                !Job.Status.COMPLETED.name().equals(status);
+                !Job.Status.COMPLETED.name().equals(status)) {
+            // continue (sleep n seconds)
+            // n needs to be configured
+            try {
+                Thread.sleep(configuration.getWaitingSleepInSeconds() * 1000);
+            } catch (InterruptedException e) {
+                LOGGER.trace("Sleep interrupted", e);
+            }
+            return true;
+        }
+        return false;
     }
 
 }

@@ -30,10 +30,12 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 /**
- * http://gmudcos.hopto.org/service/scale/docs/architecture/jobs/job_interface.html#architecture-jobs-interface-spec
+ * Implementation of <a hreF="http://gmudcos.hopto.org/service/scale/docs/architecture/jobs/job_interface.html
+ *#architecture-jobs-interface-spec">Job Interface Specification Version 1.4</a>.
  *
  * @author <a href="mailto:e.h.juerrens@52north.org">J&uuml;rrens, Eike Hinderk</a>
  *
+ * @see JobType
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({

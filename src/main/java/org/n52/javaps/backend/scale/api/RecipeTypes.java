@@ -31,6 +31,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 /**
+ * See <a href="http://gmudcos.hopto.org/service/scale/docs/rest/
+ *recipe_type.html#rest-recipe-type-list">REST API Recipe Type Services:
+ * Recipe Type List</a>.
+ *
  * @author <a href="mailto:e.h.juerrens@52north.org">J&uuml;rrens, Eike Hinderk</a>
  *
  * @since 1.4.0
@@ -57,12 +61,12 @@ public class RecipeTypes implements Serializable {
     private URL previous;
 
     @JsonProperty("results")
-    private List<ReferencedRecipeType> results = new ArrayList<>();
+    private List<RecipeTypeReference> results = new ArrayList<>();
 
     public RecipeTypes() {
     }
 
-    public RecipeTypes(long count, URL next, URL previous, List<ReferencedRecipeType> results) {
+    public RecipeTypes(long count, URL next, URL previous, List<RecipeTypeReference> results) {
         super();
         this.count = count;
         this.next = next;
@@ -116,16 +120,16 @@ public class RecipeTypes implements Serializable {
     }
 
     @JsonProperty("results")
-    public List<ReferencedRecipeType> getResults() {
+    public List<RecipeTypeReference> getResults() {
         return results;
     }
 
     @JsonProperty("results")
-    public void setResults(List<ReferencedRecipeType> results) {
+    public void setResults(List<RecipeTypeReference> results) {
         this.results = results;
     }
 
-    public RecipeTypes withResults(List<ReferencedRecipeType> results) {
+    public RecipeTypes withResults(List<RecipeTypeReference> results) {
         this.results = results;
         return this;
     }

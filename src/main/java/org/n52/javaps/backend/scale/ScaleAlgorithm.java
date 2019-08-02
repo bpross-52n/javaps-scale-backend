@@ -17,15 +17,11 @@
 package org.n52.javaps.backend.scale;
 
 import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
 import java.util.Set;
 
 import org.n52.javaps.algorithm.AbstractAlgorithm;
 import org.n52.javaps.algorithm.ExecutionException;
-import org.n52.javaps.backend.scale.api.QueueRecipe;
-import org.n52.javaps.backend.scale.api.RecipeData;
-import org.n52.javaps.backend.scale.api.RecipeData.InputData;
+import org.n52.javaps.backend.scale.api.Task;
 import org.n52.javaps.backend.scale.api.util.ScaleAuthorizationFailedException;
 import org.n52.javaps.description.TypedProcessDescription;
 import org.n52.javaps.description.TypedProcessInputDescription;
@@ -46,7 +42,7 @@ import org.slf4j.LoggerFactory;
  *
  *
  */
-public class ScaleAlgorithm extends AbstractAlgorithm {
+public abstract class ScaleAlgorithm extends AbstractAlgorithm {
 
     public static final String PREFIX = "scale-algorithm";
 
@@ -58,12 +54,6 @@ public class ScaleAlgorithm extends AbstractAlgorithm {
 
     private int scaleId;
 
-    public enum Type {
-            RECIPE,
-            JOB,
-            BATCH
-    }
-
     public ScaleAlgorithm(ScaleServiceController scaleService,
             int scaleId,
             OwsCode id,
@@ -73,10 +63,7 @@ public class ScaleAlgorithm extends AbstractAlgorithm {
             Set<OwsMetadata> metadata,
             Set<TypedProcessInputDescription<?>> inputs,
             Set<TypedProcessOutputDescription<?>> outputs,
-            String version,
-            boolean storeSupported,
-            boolean statusSupported,
-            Type type) {
+            String version) {
         super();
         this.scaleService = scaleService;
         this.scaleId = scaleId;
@@ -89,8 +76,8 @@ public class ScaleAlgorithm extends AbstractAlgorithm {
                 inputs,
                 outputs,
                 version,
-                storeSupported,
-                statusSupported);
+                true,
+                true);
     }
 
     @Override
@@ -105,13 +92,13 @@ public class ScaleAlgorithm extends AbstractAlgorithm {
         // convert context to queuejob
         try {
             // send queuejob to scale
-            int queuedRecipeId = scaleService.queue(convertToQueueRecipe(context));
-            if (queuedRecipeId < 1) {
+            int queuedTaskId = queueTask(context);
+            if (queuedTaskId < 1) {
                 throw new ExecutionException();
             }
             // WAIT for scale job to finish
             // Regularly check if job is finished via job status interface
-            /*Recipe result = */scaleService.waitForRecipe(queuedRecipeId);
+            /*Task result = */waitForTask(queuedTaskId);
             // TODO continue development here
             // store results in context
             // What about files?
@@ -125,19 +112,22 @@ public class ScaleAlgorithm extends AbstractAlgorithm {
         LOGGER.info("EXECUTE {} - {} FINISHED", this, context.getJobId().getValue());
     }
 
-    private QueueRecipe convertToQueueRecipe(ProcessExecutionContext context) {
-        List<InputData> inputData = Collections.emptyList();
-        // TODO convert input data from context to inputdata for Recipe
-        // get from context or configuration
-        Integer workspaceId = 2;
-        return new QueueRecipe()
-        .withRecipeTypeId(scaleId)
-        .withRecipeData(new RecipeData().withInputData(inputData).withWorkspaceId(workspaceId));
-    }
+    protected abstract Task waitForTask(int queuedTaskId) throws IOException, ScaleAuthorizationFailedException;
+
+    protected abstract int queueTask(ProcessExecutionContext context)
+            throws IOException, ScaleAuthorizationFailedException;
 
     @Override
     protected TypedProcessDescription createDescription() {
         return description;
+    }
+
+    protected ScaleServiceController getScaleService() {
+        return scaleService;
+    }
+
+    protected Integer getScaleId() {
+        return scaleId;
     }
 
 }

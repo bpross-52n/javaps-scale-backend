@@ -29,6 +29,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 /**
+ * See <a href="http://gmudcos.hopto.org/service/scale/docs/rest/
+ *recipe_type.html#rest-recipe-type-list">REST API Recipe Type Services:
+ * Recipe Type List</a>.
+ *
  * @author <a href="mailto:e.h.juerrens@52north.org">J&uuml;rrens, Eike Hinderk</a>
  *
  * @since 1.4.0
@@ -39,7 +43,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
     "is_active"
 })
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ReferencedRecipeType implements Serializable {
+public class RecipeTypeReference implements Serializable {
 
     @JsonIgnore
     private static final long serialVersionUID = 1000474927307839313L;
@@ -50,10 +54,10 @@ public class ReferencedRecipeType implements Serializable {
     @JsonProperty("is_active")
     private boolean isActive;
 
-    public ReferencedRecipeType() {
+    public RecipeTypeReference() {
     }
 
-    public ReferencedRecipeType(int id, boolean isActive) {
+    public RecipeTypeReference(int id, boolean isActive) {
         super();
         this.id = id;
         this.isActive = isActive;
@@ -69,7 +73,7 @@ public class ReferencedRecipeType implements Serializable {
         this.id = id;
     }
 
-    public ReferencedRecipeType withId(int id) {
+    public RecipeTypeReference withId(int id) {
         this.id = id;
         return this;
     }
@@ -84,7 +88,7 @@ public class ReferencedRecipeType implements Serializable {
         this.isActive = isActive;
     }
 
-    public ReferencedRecipeType withIsActive(boolean isActive) {
+    public RecipeTypeReference withIsActive(boolean isActive) {
         this.isActive = isActive;
         return this;
     }
@@ -110,10 +114,10 @@ public class ReferencedRecipeType implements Serializable {
         if (other == this) {
             return true;
         }
-        if (!(other instanceof ReferencedRecipeType)) {
+        if (!(other instanceof RecipeTypeReference)) {
             return false;
         }
-        ReferencedRecipeType rhs = (ReferencedRecipeType) other;
+        RecipeTypeReference rhs = (RecipeTypeReference) other;
         return new EqualsBuilder()
                 .append(isActive, rhs.isActive)
                 .append(id, rhs.id)

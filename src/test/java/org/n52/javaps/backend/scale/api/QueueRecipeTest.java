@@ -41,10 +41,10 @@ public class QueueRecipeTest {
         QueueRecipe queueRecipe = new QueueRecipe()
                 .withRecipeTypeId(1234)
                 .withRecipeData(
-                        new RecipeData()
+                        (RecipeData) new RecipeData()
+                        .withWorkspaceId(15)
                         .withVersion("1.0")
-                        .withInputData(inputData)
-                        .withWorkspaceId(15));
+                        .withInputData(inputData));
         ObjectMapper mapper = new ObjectMapper();
         String queueJobJson = mapper.writeValueAsString(queueRecipe);
         Assert.assertThat(queueJobJson, Is.is("{" +

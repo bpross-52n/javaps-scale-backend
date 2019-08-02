@@ -28,9 +28,17 @@ import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 /**
+ * Abstract superclass for the implementation of <code>input_data</code>
+ * properties of {@link Definition}.
+ *
  * @author <a href="mailto:e.h.juerrens@52north.org">J&uuml;rrens, Eike Hinderk</a>
  *
  * @since 1.4.0
+ *
+ * @see Definition
+ * @see InputDatumFile
+ * @see InputDatumFiles
+ * @see InputDatumProperty
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({

@@ -31,12 +31,14 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 /**
  * Implementation of <a href="http://gmudcos.hopto.org/service/scale/docs/architecture/jobs/recipe_data.html
- *#recipe-data-specification-version-1-0">recipe-data-specification-version-1-0</a>
+ *#recipe-data-specification-version-1-0">Recipe Data Specification Version 1.0</a>.
  *
  * @author <a href="mailto:e.h.juerrens@52north.org">J&uuml;rrens, Eike Hinderk</a>
  *
  * @since 1.4.0
  *
+ * @see TaskData
+ * @see JobData
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
@@ -44,49 +46,13 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
         "input_data",
         "workspace_id"
 })
-public class RecipeData implements Serializable {
+public class RecipeData extends TaskData implements Serializable {
 
     @JsonIgnore
     private static final long serialVersionUID = -8307470273788163750L;
 
-    @JsonProperty("version")
-    private String version = "1.0";
-
-    @JsonProperty("input_data")
-    private List<InputData> inputData;
-
     @JsonProperty("workspace_id")
     private Integer workspaceId;
-
-    @JsonProperty("version")
-    public String getVersion() {
-        return version;
-    }
-
-    @JsonProperty("version")
-    public void setVersion(String version) {
-        this.version = version;
-    }
-
-    public RecipeData withVersion(String version) {
-        this.version = version;
-        return this;
-    }
-
-    @JsonProperty("input_data")
-    public List<InputData> getInputData() {
-        return inputData;
-    }
-
-    @JsonProperty("input_data")
-    public void setInputData(List<InputData> inputData) {
-        this.inputData = inputData;
-    }
-
-    public RecipeData withInputData(List<InputData> inputData) {
-        this.inputData = inputData;
-        return this;
-    }
 
     @JsonProperty("workspace_id")
     public Integer getWorkspaceId() {
@@ -106,8 +72,6 @@ public class RecipeData implements Serializable {
     @Override
     public String toString() {
         return new ToStringBuilder(this)
-                .append("version", version)
-                .append("inputData", inputData)
                 .append("workspaceId", workspaceId)
                 .toString();
     }
@@ -116,8 +80,6 @@ public class RecipeData implements Serializable {
     public int hashCode() {
         return new HashCodeBuilder()
                 .append(workspaceId)
-                .append(inputData)
-                .append(version)
                 .toHashCode();
     }
 
@@ -132,8 +94,6 @@ public class RecipeData implements Serializable {
         RecipeData rhs = (RecipeData) other;
         return new EqualsBuilder()
                 .append(workspaceId, rhs.workspaceId)
-                .append(inputData, rhs.inputData)
-                .append(version, rhs.version)
                 .isEquals();
     }
 

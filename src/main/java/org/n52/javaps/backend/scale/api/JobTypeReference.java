@@ -29,9 +29,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 /**
- * See <a href="http://gmudcos.hopto.org/service/scale/docs/rest/
- *recipe_type.html#rest-recipe-type-details">REST API Recipe Type Services:
- * Recipe Type Details</a>.
+ * See  <a href="http://gmudcos.hopto.org/service/scale/docs/rest/job_type.html
+ *#rest-job-type-list">REST API Job Type Services: Job Type List</a>.
  *
  * @author <a href="mailto:e.h.juerrens@52north.org">J&uuml;rrens, Eike Hinderk</a>
  *
@@ -40,74 +39,72 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
     "id",
-    "name",
-    "version",
-    "title",
-    "description",
-    "is_system",
-    "is_active",
-    "definition",
-    "revision_num",
-    "created",
-    "last_modified",
-    "archived"
+    "is_active"
 })
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class RecipeType extends TaskType implements Serializable {
+public class JobTypeReference implements Serializable {
 
     @JsonIgnore
-    private static final long serialVersionUID = -3294460028265008915L;
+    private static final long serialVersionUID = 3031949327948349133L;
 
-    @JsonProperty("definition")
-    private Definition definition;
+    @JsonProperty("id")
+    private int id;
 
-    public RecipeType() {
+    @JsonProperty("is_active")
+    private boolean isActive;
+
+    public JobTypeReference() {
     }
 
-    public RecipeType(int id, String name, String version, String title, String description, boolean isSystem,
-            boolean isActive, Definition definition, int revision, String created, String lastModified,
-            String archived) {
+    public JobTypeReference(int id, boolean isActive) {
         super();
         this.id = id;
-        this.name = name;
-        this.version = version;
-        this.title = title;
-        this.description = description;
-        this.isSystem = isSystem;
         this.isActive = isActive;
-        this.revision = revision;
-        this.created = created;
-        this.lastModified = lastModified;
-        this.archived = archived;
-        this.definition = definition;
     }
 
-    @JsonProperty("definition")
-    public Definition getDefinition() {
-        return definition;
+    @JsonProperty("id")
+    public int getId() {
+        return id;
     }
 
-    @JsonProperty("definition")
-    public void setDefinition(Definition definition) {
-        this.definition = definition;
+    @JsonProperty("id")
+    public void setId(int id) {
+        this.id = id;
     }
 
-    public RecipeType withDefinition(Definition definition) {
-        this.definition = definition;
+    public JobTypeReference withId(int id) {
+        this.id = id;
+        return this;
+    }
+
+    @JsonProperty("is_active")
+    public boolean isIsActive() {
+        return isActive;
+    }
+
+    @JsonProperty("is_active")
+    public void setIsActive(boolean isActive) {
+        this.isActive = isActive;
+    }
+
+    public JobTypeReference withIsActive(boolean isActive) {
+        this.isActive = isActive;
         return this;
     }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this)
-                .append("definition", definition)
+                .append("id", id)
+                .append("isActive", isActive)
                 .toString();
     }
 
     @Override
     public int hashCode() {
         return new HashCodeBuilder()
-                .append(definition)
+                .append(isActive)
+                .append(id)
                 .toHashCode();
     }
 
@@ -116,12 +113,13 @@ public class RecipeType extends TaskType implements Serializable {
         if (other == this) {
             return true;
         }
-        if (!(other instanceof RecipeType)) {
+        if (!(other instanceof JobTypeReference)) {
             return false;
         }
-        RecipeType rhs = (RecipeType) other;
+        JobTypeReference rhs = (JobTypeReference) other;
         return new EqualsBuilder()
-                .append(definition, rhs.definition)
+                .append(isActive, rhs.isActive)
+                .append(id, rhs.id)
                 .isEquals();
     }
 

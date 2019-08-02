@@ -31,7 +31,7 @@ public class RecipeDataTest {
 
     @Test
     public void shouldEncodeLiteralInputDatum() throws JsonProcessingException {
-        RecipeData recipeData = new RecipeData()
+        TaskData recipeData = new RecipeData()
                 .withVersion("52.42.23")
                 .withInputData(Collections.singletonList(
                         new RecipeData.InputData()
@@ -50,7 +50,7 @@ public class RecipeDataTest {
 
     @Test
     public void shouldEncodeFileInputDatum() throws JsonProcessingException {
-        RecipeData recipeData = new RecipeData()
+        TaskData recipeData = new RecipeData()
                 .withVersion("52.42.23")
                 .withInputData(Collections.singletonList(
                         new RecipeData.InputData()
@@ -72,7 +72,7 @@ public class RecipeDataTest {
         List<Integer> fileIds = new LinkedList<>();
         fileIds.add(123456);
         fileIds.add(123457);
-        RecipeData recipeData = new RecipeData()
+        TaskData recipeData = new RecipeData()
                 .withVersion("52.42.23")
                 .withInputData(Collections.singletonList(
                         new RecipeData.InputData()
@@ -93,9 +93,9 @@ public class RecipeDataTest {
 
     @Test
     public void shouldEncodeOutputData() throws JsonProcessingException {
-        RecipeData recipeData = new RecipeData()
-                .withVersion("52.42.23")
-                .withWorkspaceId(123456);
+        TaskData recipeData = new RecipeData()
+                .withWorkspaceId(123456)
+                .withVersion("52.42.23");
         ObjectMapper mapper = new ObjectMapper();
         String jobDataJson = mapper.writeValueAsString(recipeData);
         Assert.assertThat(jobDataJson, Is.is("{" +

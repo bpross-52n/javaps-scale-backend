@@ -29,6 +29,8 @@ import javax.annotation.Resource;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.n52.javaps.backend.scale.api.Job;
+import org.n52.javaps.backend.scale.api.QueueJob;
 import org.n52.javaps.backend.scale.api.QueueRecipe;
 import org.n52.javaps.backend.scale.api.Recipe;
 import org.n52.javaps.backend.scale.api.util.ScaleAuthorizationFailedException;
@@ -61,18 +63,47 @@ public class ScaleServiceControllerTest extends AbstractTestCase {
     }
 
     @Test
-    public void testQueue() throws IOException, ScaleAuthorizationFailedException {
+    public void testQueueRecipe() throws IOException, ScaleAuthorizationFailedException {
         QueueRecipe queueRecipe = new QueueRecipe()
                 .withRecipeTypeId(1);
+        // recipe type 1 is currently Scale Casino 1.0
+        // http://gmudcos.hopto.org/service/scale/#/recipes/types/1
         int queuedRecipeId = scaleService.queue(queueRecipe);
         assertThat(queuedRecipeId, is(not(-1)));
     }
 
     @Test
-    @Ignore
-    public void testWait() throws IOException, ScaleAuthorizationFailedException {
-        Recipe finishedRecipe = scaleService.waitForRecipe(11);
+    @Ignore("Waiting for recipe of type 1 to finish takes to long")
+    public void testWaitForRecipe() throws IOException, ScaleAuthorizationFailedException {
+        QueueRecipe queueRecipe = new QueueRecipe()
+                .withRecipeTypeId(1);
+        // recipe type 1 is currently Scale Casino 1.0
+        // http://gmudcos.hopto.org/service/scale/#/recipes/types/1
+        int queuedRecipeId = scaleService.queue(queueRecipe);
+        Recipe finishedRecipe = scaleService.waitForRecipe(queuedRecipeId);
         assertThat(finishedRecipe, is(notNullValue()));
+    }
+
+    @Test
+    public void testQueueJob() throws IOException, ScaleAuthorizationFailedException {
+        QueueJob queueJob = new QueueJob()
+                .withJobTypeId(2);
+        // job type 2 is currently scale-hello
+        // http://gmudcos.hopto.org/service/scale/#/jobs/types/2
+        int queuedJobId = scaleService.queue(queueJob);
+        assertThat(queuedJobId, is(not(-1)));
+    }
+
+    @Test
+    @Ignore("Waiting for job of type 2 to finish takes to long")
+    public void testWaitForJob() throws IOException, ScaleAuthorizationFailedException {
+        QueueJob queueJob = new QueueJob()
+                .withJobTypeId(2);
+        // job type 2 is currently scale-hello
+        // http://gmudcos.hopto.org/service/scale/#/jobs/types/2
+        int queuedJobId = scaleService.queue(queueJob);
+        Job finishedJob = scaleService.waitForJob(queuedJobId);
+        assertThat(finishedJob, is(notNullValue()));
     }
 
 }
