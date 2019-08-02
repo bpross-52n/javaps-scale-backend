@@ -37,6 +37,20 @@ import retrofit2.http.Query;
  * Interface for accessing a <a href="http://gmudcos.hopto.org/service/scale/
  *docs/rest/index.html">Scale REST API</a>.
  *
+ * User sub services:
+ * <ul>
+ * <li><a href="http://gmudcos.hopto.org/service/scale/docs/rest/
+ *job.html">Job Services</a></li>
+ * <li><a href="http://gmudcos.hopto.org/service/scale/docs/rest/
+ *job_type.html">Job Type Services</a></li>
+ * <li><a href="http://gmudcos.hopto.org/service/scale/docs/rest/
+ *queue.html">Queue Services</a></li>
+ * <li><a href="http://gmudcos.hopto.org/service/scale/docs/rest/
+ *recipe_type.html">Recipe Type Services</a></li>
+ * <li><a href="http://gmudcos.hopto.org/service/scale/docs/rest/
+ *recipe.html">Recipe Services</a></li>
+ * </ul>
+ *
  * @author <a href="mailto:e.h.juerrens@52north.org">J&uuml;rrens, Eike Hinderk</a>
  *
  * @since 1.4.0
@@ -45,33 +59,43 @@ public interface ScaleService {
 
     String QUERY_PARAM_KEY_PAGE = "page";
 
+    // http://gmudcos.hopto.org/service/scale/docs/rest/recipe_type.html#rest-recipe-type-list
     @GET("recipe-types/")
     Call<RecipeTypes> getRecipeTypes(@Header("Cookie") String dcosAuthCookie);
 
+    // http://gmudcos.hopto.org/service/scale/docs/rest/recipe_type.html#rest-recipe-type-list
     @GET("recipe-types/")
     Call<RecipeTypes> getRecipeTypes(@Header("Cookie") String dcosAuthCookie, @Query("page") int page);
 
+    // http://gmudcos.hopto.org/service/scale/docs/rest/recipe_type.html#rest-recipe-type-details
     @GET("recipe-types/{id}/")
     Call<RecipeType> getRecipeType(@Header("Cookie") String dcosAuthCookie, @Path("id") int id);
 
+    // http://gmudcos.hopto.org/service/scale/docs/rest/job_type.html#rest-job-type-list
     @GET("job-types/")
     Call<JobTypes> getJobTypes(@Header("Cookie") String dcosAuthCookie);
 
+    // http://gmudcos.hopto.org/service/scale/docs/rest/job_type.html#rest-job-type-list
     @GET("job-types/")
     Call<JobTypes> getJobTypes(@Header("Cookie") String dcosAuthCookie, @Query("page") int page);
 
+    // http://gmudcos.hopto.org/service/scale/docs/rest/job_type.html#rest-job-type-details
     @GET("job-types/{id}/")
     Call<JobType> getJobType(@Header("Cookie") String dcosAuthCookie, @Path("id") int id);
 
+    // http://gmudcos.hopto.org/service/scale/docs/rest/queue.html
     @POST("queue/new-recipe/")
     Call<Void> schedule(@Header("Cookie") String dcosAuthCookie, @Body QueueRecipe queueRecipe);
 
+    // http://gmudcos.hopto.org/service/scale/docs/rest/queue.html
     @POST("queue/new-job/")
     Call<Void> schedule(@Header("Cookie") String dcosAuthCookie, @Body QueueJob queueJob);
 
+    // http://gmudcos.hopto.org/service/scale/docs/rest/recipe.html#rest-recipe-details
     @GET("recipes/{id}/")
     Call<Recipe> getRecipe(@Header("Cookie") String dcosAuthCookie, @Path("id") int id);
 
+    // http://gmudcos.hopto.org/service/scale/docs/rest/job.html#rest-job-details
     @GET("jobs/{id}/")
     Call<Job> getJob(@Header("Cookie") String dcosAuthCookie, @Path("id") int id);
 }
