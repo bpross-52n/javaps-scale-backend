@@ -35,7 +35,9 @@ import org.n52.javaps.backend.scale.api.TaskType;
 import org.n52.javaps.description.TypedProcessInputDescription;
 import org.n52.javaps.description.TypedProcessOutputDescription;
 import org.n52.javaps.description.impl.TypedComplexInputDescriptionImpl;
+import org.n52.javaps.description.impl.TypedComplexOutputDescriptionImpl;
 import org.n52.javaps.description.impl.TypedLiteralInputDescriptionImpl;
+import org.n52.javaps.description.impl.TypedLiteralOutputDescriptionImpl;
 import org.n52.javaps.io.data.binding.complex.GenericFileDataBinding;
 import org.n52.javaps.io.literal.xsd.LiteralStringType;
 import org.n52.shetland.ogc.ows.OwsAnyValue;
@@ -146,7 +148,10 @@ public class Converter {
 
     private Set<TypedProcessOutputDescription<?>> convertToOutputDescriptions(List<OutputDatum> outputData) {
         // TODO Auto-generated method stub -> implement me!
-        return Collections.emptySet();
+        if (outputData == null || outputData.isEmpty()) {
+            return Collections.emptySet();
+        }
+        return outputData.stream().map(this::convertToOutputDescription).collect(Collectors.toSet());
     }
 
     private Set<TypedProcessInputDescription<?>> convertToInputDescriptions(List<InputDatum> inputData) {
@@ -194,6 +199,43 @@ public class Converter {
                                 null),
                         Collections.emptySet(),
                         new LiteralStringType());
+        }
+    }
+
+    private TypedProcessOutputDescription<?> convertToOutputDescription(OutputDatum outputData) {
+        OwsCode id = new OwsCode(outputData.getName());
+        OwsLanguageString title = new OwsLanguageString(outputData.getName());
+        OwsLanguageString abstrakt = title;
+        Set<OwsKeyword> keywords = Collections.emptySet();
+        Set<OwsMetadata> metadata = Collections.emptySet();
+        //TODO: check switch statement
+        switch (outputData.getClass().getSimpleName()) {
+        case "OutputDatum":
+            BigInteger maximumMegabytes = BigInteger.ZERO;
+            Set<Format> supportedFormats = Collections.singleton(new Format(outputData.getMediaType()));
+
+            Format defaultFormat = supportedFormats.iterator().next();
+            // FIXME switch to builder pattern
+            return new TypedComplexOutputDescriptionImpl(id,
+                    title, abstrakt, keywords, metadata, defaultFormat, supportedFormats,
+                    maximumMegabytes, GenericFileDataBinding.class);
+        case "OutputDatumProperty":
+        default:
+            // FIXME switch to builder pattern
+            return new TypedLiteralOutputDescriptionImpl(
+                    id,
+                    title,
+                    abstrakt,
+                    keywords,
+                    metadata,
+                    new LiteralDataDomainImpl(OwsAnyValue.instance(),
+                            // datatype
+                            null,
+                            new OwsDomainMetadata(" "),
+                            // default value
+                            null),
+                    Collections.emptySet(),
+                    new LiteralStringType());
         }
     }
 
