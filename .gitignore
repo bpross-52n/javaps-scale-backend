@@ -1,1 +1,5 @@
 scale_config.json
+/target/
+.project
+.classpath
+.settings/
