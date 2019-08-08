@@ -318,4 +318,12 @@ public class ScaleServiceController implements Constructable, Destroyable {
         return false;
     }
 
+    public Converter getConverter() {
+        return converter;
+    }
+
+    public ScaleConfiguration getConfiguration() {
+        return configuration;
+    }
+
 }

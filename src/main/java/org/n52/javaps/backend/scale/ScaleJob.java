@@ -17,23 +17,31 @@
 package org.n52.javaps.backend.scale;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.io.output.ByteArrayOutputStream;
+import org.n52.javaps.algorithm.ProcessInputs;
 import org.n52.javaps.backend.scale.api.JobData;
-import org.n52.javaps.backend.scale.api.OutputDatum;
+import org.n52.javaps.backend.scale.api.JobData.OutputData;
 import org.n52.javaps.backend.scale.api.QueueJob;
 import org.n52.javaps.backend.scale.api.RecipeData.InputData;
 import org.n52.javaps.backend.scale.api.Task;
 import org.n52.javaps.backend.scale.api.util.ScaleAuthorizationFailedException;
 import org.n52.javaps.description.TypedProcessInputDescription;
 import org.n52.javaps.description.TypedProcessOutputDescription;
+import org.n52.javaps.engine.EngineProcessExecutionContext;
 import org.n52.javaps.engine.ProcessExecutionContext;
 import org.n52.shetland.ogc.ows.OwsCode;
 import org.n52.shetland.ogc.ows.OwsKeyword;
 import org.n52.shetland.ogc.ows.OwsLanguageString;
 import org.n52.shetland.ogc.ows.OwsMetadata;
+import org.n52.shetland.ogc.wps.OutputDefinition;
+
+import com.google.common.base.Charsets;
 
 public class ScaleJob extends ScaleAlgorithm {
 
@@ -55,15 +63,35 @@ public class ScaleJob extends ScaleAlgorithm {
     }
 
     private QueueJob convertToQueueJob(ProcessExecutionContext context) {
-        List<InputData> inputData = Collections.emptyList();
+
+        ProcessInputs processInputs = context.getInputs();
+
+        Collection<OutputDefinition> outputDefinitionList = Collections.emptyList();
+
+        if (context instanceof EngineProcessExecutionContext) {
+            Map<OwsCode, OutputDefinition> ouputputDefinitions =
+                    ((EngineProcessExecutionContext) context).getOutputDefinitions();
+            outputDefinitionList = ouputputDefinitions.values();
+        }
+
+        List<InputData> inputData = scaleService.getConverter().convertProcessInputsToInputData(processInputs);
         // TODO convert input data from context to inputdata for Recipe
         // TODO get workspaceId from context or configuration
-        List<OutputDatum> outputData = Collections.emptyList();
-        return new QueueJob()
-                .withJobTypeId(getScaleId())
-                .withJobData((JobData) new JobData()
-                        .withOutputData(outputData)
-                        .withInputData(inputData));
+        List<OutputData> outputData =
+                scaleService.getConverter().convertProcessOutputsToOutputData(outputDefinitionList);
+
+        QueueJob queueJob = new QueueJob().withJobTypeId(getScaleId())
+                .withJobData((JobData) new JobData().withOutputData(outputData).withInputData(inputData));
+        try {
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            new com.fasterxml.jackson.databind.ObjectMapper().writer().writeValue(byteArrayOutputStream, queueJob);
+            LOGGER.debug(byteArrayOutputStream.toString(Charsets.UTF_8));
+        } catch (Exception e) {
+            // ignore
+            LOGGER.trace("Could not log QueueJob.", e);
+        }
+
+        return queueJob;
     }
 
 }

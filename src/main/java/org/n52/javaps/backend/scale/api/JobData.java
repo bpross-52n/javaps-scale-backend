@@ -19,6 +19,10 @@ package org.n52.javaps.backend.scale.api;
 import java.io.Serializable;
 import java.util.List;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -48,21 +52,98 @@ public class JobData extends TaskData implements Serializable {
     private static final long serialVersionUID = -347491433199918030L;
 
     @JsonProperty("output_data")
-    private List<OutputDatum> outputData;
+    private List<OutputData> outputData;
 
     @JsonProperty("output_data")
-    public List<OutputDatum> getOutputData() {
+    public List<OutputData> getOutputData() {
         return outputData;
     }
 
     @JsonProperty("output_data")
-    public void setOutputData(List<OutputDatum> outputData) {
+    public void setOutputData(List<OutputData> outputData) {
         this.outputData = outputData;
     }
 
-    public JobData withOutputData(List<OutputDatum> outputData) {
+    public JobData withOutputData(List<OutputData> outputData) {
         this.outputData = outputData;
         return this;
+    }
+
+    /**
+     * Job OutputData
+     *
+     * <a href="http://gmudcos.hopto.org/service/scale/docs/architecture/jobs/job_data.html
+     *#job-data-specification-version-1-0">Source</a>
+     *
+     */
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    public static class OutputData implements Serializable {
+
+        @JsonIgnore
+        private static final long serialVersionUID = 8578968687335757066L;
+
+
+        @JsonProperty("name")
+        private String name;
+
+        @JsonProperty("workspace_id")
+        private int workspaceId;
+
+        @JsonProperty("name")
+        public String getName() {
+            return name;
+        }
+
+        @JsonProperty("name")
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        @JsonProperty("workspace_id")
+        public int getWorkspaceId() {
+            return workspaceId;
+        }
+
+        public void setWorkspaceId(int workspaceId) {
+            this.workspaceId = workspaceId;
+        }
+
+        public OutputData withName(String name) {
+            this.name = name;
+            return this;
+        }
+
+        @Override
+        public String toString() {
+            return new ToStringBuilder(this)
+                    .append("name", name)
+                    .append("workspace_id", workspaceId)
+                    .toString();
+        }
+
+        @Override
+        public int hashCode() {
+            return new HashCodeBuilder()
+                    .append(name)
+                    .append(workspaceId)
+                    .toHashCode();
+        }
+
+        @Override
+        public boolean equals(Object other) {
+            if (other == this) {
+                return true;
+            }
+            if (!(other instanceof OutputData)) {
+                return false;
+            }
+            OutputData rhs = (OutputData) other;
+            return new EqualsBuilder()
+                    .append(name, rhs.name)
+                    .append(workspaceId, rhs.workspaceId)
+                    .isEquals();
+        }
+
     }
 
 

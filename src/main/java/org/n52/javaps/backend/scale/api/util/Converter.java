@@ -17,19 +17,25 @@
 package org.n52.javaps.backend.scale.api.util;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.n52.javaps.algorithm.ProcessInputs;
 import org.n52.javaps.backend.scale.ScaleAlgorithm;
 import org.n52.javaps.backend.scale.ScaleJob;
 import org.n52.javaps.backend.scale.ScaleRecipe;
 import org.n52.javaps.backend.scale.ScaleServiceController;
 import org.n52.javaps.backend.scale.api.InputDatum;
 import org.n52.javaps.backend.scale.api.InputDatumFile;
+import org.n52.javaps.backend.scale.api.JobData.OutputData;
 import org.n52.javaps.backend.scale.api.JobType;
 import org.n52.javaps.backend.scale.api.OutputDatum;
+import org.n52.javaps.backend.scale.api.RecipeData.InputData;
 import org.n52.javaps.backend.scale.api.RecipeType;
 import org.n52.javaps.backend.scale.api.TaskType;
 import org.n52.javaps.description.TypedProcessInputDescription;
@@ -38,7 +44,10 @@ import org.n52.javaps.description.impl.TypedComplexInputDescriptionImpl;
 import org.n52.javaps.description.impl.TypedComplexOutputDescriptionImpl;
 import org.n52.javaps.description.impl.TypedLiteralInputDescriptionImpl;
 import org.n52.javaps.description.impl.TypedLiteralOutputDescriptionImpl;
+import org.n52.javaps.io.Data;
+import org.n52.javaps.io.complex.ComplexData;
 import org.n52.javaps.io.data.binding.complex.GenericFileDataBinding;
+import org.n52.javaps.io.literal.LiteralData;
 import org.n52.javaps.io.literal.xsd.LiteralStringType;
 import org.n52.shetland.ogc.ows.OwsAnyValue;
 import org.n52.shetland.ogc.ows.OwsCode;
@@ -48,6 +57,7 @@ import org.n52.shetland.ogc.ows.OwsLanguageString;
 import org.n52.shetland.ogc.ows.OwsMetadata;
 import org.n52.shetland.ogc.wps.Format;
 import org.n52.shetland.ogc.wps.InputOccurence;
+import org.n52.shetland.ogc.wps.OutputDefinition;
 import org.n52.shetland.ogc.wps.description.impl.LiteralDataDomainImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -118,6 +128,73 @@ public class Converter {
                 inputs,
                 outputs,
                 createVersion(jobType));
+    }
+
+    public List<InputData> convertProcessInputsToInputData(ProcessInputs processInputs) {
+
+        List<InputData> result = new ArrayList<InputData>();
+
+        for (Entry<OwsCode, List<Data<?>>> entry : processInputs.entrySet()) {
+
+            OwsCode id = entry.getKey();
+
+            List<Data<?>> dataList = processInputs.get(id);
+
+            //size should be always one
+            Data<?> data = dataList.get(0);
+
+            //create new InputData
+            InputData inputData = new InputData();
+
+            if (data instanceof LiteralData) {
+
+                LiteralData literalData = (LiteralData) data;
+
+                Object value = literalData.getPayload();
+
+                inputData.setName(id.getValue());
+
+                inputData.setValue(value.toString());
+
+            } else if (data instanceof ComplexData) {
+
+                LOGGER.info("ComplexData input not added to JobData: " + id.getValue());
+            }
+
+            result.add(inputData);
+        }
+
+        return result;
+    }
+
+    public List<OutputData> convertProcessOutputsToOutputData(Collection<OutputDefinition> outputDefinitionList) {
+
+        List<OutputData> result = new ArrayList<OutputData>();
+
+        for (OutputDefinition outputDefinition : outputDefinitionList) {
+
+            OwsCode id = outputDefinition.getId();
+
+            //create new InputData
+            OutputData outputData = new OutputData();
+
+            outputData.setName(id.getValue());
+
+            outputData.setWorkspaceId(scaleService.getConfiguration().getScaleOutputWorkspaceId());
+
+//            if (outputDefinition instanceof LiteralOutputDescription) {
+//
+//                LOGGER.info("LiteralData output not added to JobData: " + id.getValue());
+//
+//            } else if (data instanceof ComplexData) {
+//
+//                outputData.setWorkspaceId(scaleService.getConfiguration().getScaleOutputWorkspaceId());
+//            }
+
+            result.add(outputData);
+        }
+
+        return result;
     }
 
     private OwsLanguageString createAbstract(TaskType taskType) {

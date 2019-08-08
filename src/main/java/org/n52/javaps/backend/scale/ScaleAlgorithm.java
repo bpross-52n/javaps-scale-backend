@@ -21,6 +21,7 @@ import java.util.Set;
 
 import org.n52.javaps.algorithm.AbstractAlgorithm;
 import org.n52.javaps.algorithm.ExecutionException;
+import org.n52.javaps.backend.scale.api.Job;
 import org.n52.javaps.backend.scale.api.Task;
 import org.n52.javaps.backend.scale.api.util.ScaleAuthorizationFailedException;
 import org.n52.javaps.description.TypedProcessDescription;
@@ -46,9 +47,9 @@ public abstract class ScaleAlgorithm extends AbstractAlgorithm {
 
     public static final String PREFIX = "scale-algorithm";
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ScaleAlgorithm.class);
+    protected final Logger LOGGER = LoggerFactory.getLogger(getClass());
 
-    private ScaleServiceController scaleService;
+    protected ScaleServiceController scaleService;
 
     private TypedProcessDescriptionImpl description;
 
@@ -98,7 +99,12 @@ public abstract class ScaleAlgorithm extends AbstractAlgorithm {
             }
             // WAIT for scale job to finish
             // Regularly check if job is finished via job status interface
-            /*Task result = */waitForTask(queuedTaskId);
+            Task result = waitForTask(queuedTaskId);
+
+            if (result instanceof Job) {
+                LOGGER.info("Result is Job.");
+            }
+
             // TODO continue development here
             // store results in context
             // What about files?

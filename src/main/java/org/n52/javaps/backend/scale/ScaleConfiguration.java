@@ -62,6 +62,8 @@ public class ScaleConfiguration implements ConfigurableClass {
 
     private static final String SCALE_WAITING_SLEEP_IN_SECONDS = "scale_waiting_sleep_in_seconds";
 
+    private static final String SCALE_OUTPUT_WORKSPACE_ID = "scale_output_workspace_id";
+
     private Optional<URL> scaleAuthEndpoint;
 
     private Optional<Integer> scaleAuthTokenLifeTime;
@@ -77,6 +79,8 @@ public class ScaleConfiguration implements ConfigurableClass {
     private int scaleAlgorithmCacheUpdatePeriodInMinutes;
 
     private int scaleWaitingSleepInSeconds;
+
+    private int scaleOutputWorkspaceId;
 
     public ScaleConfiguration() {
         JsonNode properties = getProperties();
@@ -98,6 +102,7 @@ public class ScaleConfiguration implements ConfigurableClass {
                     properties.get(SCALE_ALGORITHM_CACHE_UPDATE_PERIOD_IN_MINUTES).asInt(5);
             scaleWaitingSleepInSeconds =
                     properties.get(SCALE_WAITING_SLEEP_IN_SECONDS).asInt(5);
+            scaleOutputWorkspaceId = properties.get(SCALE_OUTPUT_WORKSPACE_ID).asInt();
         }
         LOGGER.info("NEW {}", this);
     }
@@ -150,6 +155,10 @@ public class ScaleConfiguration implements ConfigurableClass {
 
     public int getWaitingSleepInSeconds() {
         return scaleWaitingSleepInSeconds;
+    }
+
+    public int getScaleOutputWorkspaceId() {
+        return scaleOutputWorkspaceId;
     }
 
 }
