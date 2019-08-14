@@ -1,0 +1,13 @@
+{
+	"formats": [
+		{
+			"mimeType": "application/octet-stream",
+			"default": true
+		},
+		{
+			"mimeType": "application/octet-stream",
+			"encoding": "base64",
+			"default": true
+		}
+	]
+}

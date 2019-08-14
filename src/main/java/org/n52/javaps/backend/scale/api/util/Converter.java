@@ -16,15 +16,24 @@
  */
 package org.n52.javaps.backend.scale.api.util;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.math.BigInteger;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.apache.commons.io.IOUtils;
 import org.n52.javaps.algorithm.ProcessInputs;
 import org.n52.javaps.backend.scale.ScaleAlgorithm;
 import org.n52.javaps.backend.scale.ScaleJob;
@@ -38,6 +47,7 @@ import org.n52.javaps.backend.scale.api.OutputDatum;
 import org.n52.javaps.backend.scale.api.RecipeData.InputData;
 import org.n52.javaps.backend.scale.api.RecipeType;
 import org.n52.javaps.backend.scale.api.TaskType;
+import org.n52.javaps.backend.scale.api.Job.JobResultOutputs;
 import org.n52.javaps.description.TypedProcessInputDescription;
 import org.n52.javaps.description.TypedProcessOutputDescription;
 import org.n52.javaps.description.impl.TypedComplexInputDescriptionImpl;
@@ -45,6 +55,7 @@ import org.n52.javaps.description.impl.TypedComplexOutputDescriptionImpl;
 import org.n52.javaps.description.impl.TypedLiteralInputDescriptionImpl;
 import org.n52.javaps.description.impl.TypedLiteralOutputDescriptionImpl;
 import org.n52.javaps.io.Data;
+import org.n52.javaps.io.GenericFileData;
 import org.n52.javaps.io.complex.ComplexData;
 import org.n52.javaps.io.data.binding.complex.GenericFileDataBinding;
 import org.n52.javaps.io.literal.LiteralData;
@@ -288,14 +299,25 @@ public class Converter {
         //TODO: check switch statement
         switch (outputData.getClass().getSimpleName()) {
         case "OutputDatum":
-            BigInteger maximumMegabytes = BigInteger.ZERO;
-            Set<Format> supportedFormats = Collections.singleton(new Format(outputData.getMediaType()));
+            
+            Collection<Format> formatList = new ArrayList<Format>();
+            
+            String mediaType = outputData.getMediaType();
+            if (mediaType != null && !mediaType.isEmpty()) {
+                formatList.add(new Format(outputData.getMediaType()));
+                formatList.add(new Format(outputData.getMediaType(), "base64"));
+            }
+            formatList.add(new Format("application/octet-stream"));
+            formatList.add(new Format("application/octet-stream", "base64"));
+            
+            Set<Format> supportedFormats = new HashSet<Format>(formatList);
+//            Set<Format> supportedFormats = Collections.singleton(new Format(outputData.getMediaType()));
 
             Format defaultFormat = supportedFormats.iterator().next();
             // FIXME switch to builder pattern
             return new TypedComplexOutputDescriptionImpl(id,
                     title, abstrakt, keywords, metadata, defaultFormat, supportedFormats,
-                    maximumMegabytes, GenericFileDataBinding.class);
+                    null, GenericFileDataBinding.class);
         case "OutputDatumProperty":
         default:
             // FIXME switch to builder pattern
@@ -314,6 +336,75 @@ public class Converter {
                     Collections.emptySet(),
                     new LiteralStringType());
         }
+    }
+    
+    public void convertJobResultsOutputsToProcessOutputs(List<JobResultOutputs> jobResultOutputs,
+            HashMap<OwsCode, Data<?>> processOutputs) {
+
+        for (JobResultOutputs jobResultOutput : jobResultOutputs) {
+
+            OwsCode id = new OwsCode(jobResultOutput.getName());
+
+            String type = jobResultOutput.getType();
+            
+            switch (type) {
+            case "file":
+                Data<?> processOutput = convertJobResultFileOutputToProcessOutput(jobResultOutput);
+                processOutputs.put(id, processOutput);
+                break;
+
+            default:
+                break;
+            }
+
+        }
+
+    }
+
+    private Data<?> convertJobResultFileOutputToProcessOutput(JobResultOutputs jobResultOutput) {
+        
+        String urlString = jobResultOutput.getValue().getUrl();
+
+        URL url = null;
+        try {
+            url = new URL(urlString);
+        } catch (MalformedURLException e) {
+            LOGGER.error("Exception while creating URL from String: " + urlString, e.getMessage());
+            return null;
+        }
+
+        File resultFile = null;
+        try {
+            resultFile = File.createTempFile("wps", ".dat");
+        } catch (IOException e) {
+            LOGGER.error("Exception while trying to create temp file.", e.getMessage());
+            return null;
+        }
+
+        FileOutputStream fileOutputStream = null;
+        try {
+            fileOutputStream = new FileOutputStream(resultFile);
+        } catch (FileNotFoundException e) {
+            LOGGER.error("Exception while trying to create FileOutputStream for temp file.", e.getMessage());
+            return null;
+        }
+
+        try {
+            IOUtils.copy(url.openStream(), fileOutputStream);
+        } catch (IOException e) {
+            LOGGER.error("Exception while trying to copy streams.", e.getMessage());
+            return null;
+        }
+
+        String mimeType = jobResultOutput.getValue().getMediaType();
+
+        try {
+             return new GenericFileDataBinding(new GenericFileData(resultFile, mimeType));
+        } catch (IOException e) {
+            LOGGER.error("Exception while trying to create GenericFileDataBinding.", e.getMessage());
+        }
+        return null;
+        
     }
 
 }

@@ -82,7 +82,6 @@ public class JobData extends TaskData implements Serializable {
         @JsonIgnore
         private static final long serialVersionUID = 8578968687335757066L;
 
-
         @JsonProperty("name")
         private String name;
 

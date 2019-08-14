@@ -16,19 +16,29 @@
  */
 package org.n52.javaps.backend.scale;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.URL;
+import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.io.IOUtils;
 import org.n52.javaps.algorithm.AbstractAlgorithm;
 import org.n52.javaps.algorithm.ExecutionException;
+import org.n52.javaps.algorithm.ProcessOutputs;
 import org.n52.javaps.backend.scale.api.Job;
+import org.n52.javaps.backend.scale.api.Job.JobResultOutputs;
 import org.n52.javaps.backend.scale.api.Task;
 import org.n52.javaps.backend.scale.api.util.ScaleAuthorizationFailedException;
 import org.n52.javaps.description.TypedProcessDescription;
 import org.n52.javaps.description.TypedProcessInputDescription;
 import org.n52.javaps.description.TypedProcessOutputDescription;
 import org.n52.javaps.description.impl.TypedProcessDescriptionImpl;
+import org.n52.javaps.engine.EngineProcessExecutionContext;
 import org.n52.javaps.engine.ProcessExecutionContext;
+import org.n52.javaps.io.GenericFileData;
+import org.n52.javaps.io.data.binding.complex.GenericFileDataBinding;
 import org.n52.shetland.ogc.ows.OwsCode;
 import org.n52.shetland.ogc.ows.OwsKeyword;
 import org.n52.shetland.ogc.ows.OwsLanguageString;
@@ -103,6 +113,15 @@ public abstract class ScaleAlgorithm extends AbstractAlgorithm {
 
             if (result instanceof Job) {
                 LOGGER.info("Result is Job.");
+                
+                Job resultJob = (Job)result;
+                
+                List<JobResultOutputs> outputs = resultJob.getOutputs();
+                
+                ProcessOutputs processOutputs = context.getOutputs();
+                
+                scaleService.getConverter().convertJobResultsOutputsToProcessOutputs(outputs, processOutputs);                
+                
             }
 
             // TODO continue development here
@@ -112,6 +131,7 @@ public abstract class ScaleAlgorithm extends AbstractAlgorithm {
             // Or
             // I have to download and then save in GenericFileDataBinding
             // and save in the context
+            
         } catch (IOException | ScaleAuthorizationFailedException e) {
             throw new ExecutionException(e);
         }
