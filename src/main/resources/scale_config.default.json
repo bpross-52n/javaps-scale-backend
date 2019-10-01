@@ -1,11 +1,12 @@
 {
-    "scale_dcos_host"                                    : "https://dcos-host.example.com/",
+    "scale_dcos_host"                                    : "http://gmudcos.hopto.org/",
     "scale_auth_contextpath"                             : "acs/api/v1/auth/login",
     "scale_auth_token_lifetime"                          : 570,
 	"scale_webserver_contextpath"                        : "service/scale/api/v5/",
-	"scale_jwt_auth_token"                               : "jwt-token-not-specified",
-    "scale_info_cookie"                                  : "info-cookie-not-specified",
+	"scale_jwt_auth_token"                               : "eyJhbGciOiJIUzI1NiIsImtpZCI6InNlY3JldCIsInR5cCI6IkpXVCJ9.eyJhdWQiOiIzeUY1VE9TemRsSTQ1UTF4c3B4emVvR0JlOWZOeG05bSIsImVtYWlsIjoiYi5wcm9zc0A1Mm5vcnRoLm9yZyIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJleHAiOjE1NzAzNDU5OTcsImlhdCI6MTU2OTkxMzk5NywiaXNzIjoiaHR0cHM6Ly9kY29zLmF1dGgwLmNvbS8iLCJzdWIiOiJnaXRodWJ8MzY5Mjc5NCIsInVpZCI6ImIucHJvc3NANTJub3J0aC5vcmcifQ.UVW_-noIWQHvQcy0MG96Fe2pdW53GBYLlSeKa2At4mY",
+    "scale_info_cookie"                                  : "eyJ1aWQiOiJiLnByb3NzQDUybm9ydGgub3JnIiwiZGVzY3JpcHRpb24iOiJiLnByb3NzQDUybm9ydGgub3JnIn0=",
     "scale_algorithm_cache_update_startup_delay_seconds" : 5,
     "scale_algorithm_cache_update_period_in_minutes"     : 1,
-    "scale_waiting_sleep_in_seconds"                     : 30
+    "scale_waiting_sleep_in_seconds"                     : 30,
+    "scale_output_workspace_id"                          : 1
 }

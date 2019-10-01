@@ -146,7 +146,12 @@ public class ScaleServiceController implements Constructable, Destroyable {
                     continue;
                 }
                 JobType jobType = jobTypeResponse.body();
-                result.add(converter.convertToAlgorithm(jobType));
+                ScaleAlgorithm scaleAlgorithm = converter.convertToAlgorithm(jobType);
+                if (scaleAlgorithm == null) {
+                    LOGGER.info("Conversion failed for job type: " + jobType);
+                    continue;
+                }
+                result.add(scaleAlgorithm);
             }
         } while (jobTypes.getNext() != null);
     }

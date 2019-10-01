@@ -8,6 +8,13 @@
 			"mimeType": "application/octet-stream",
 			"encoding": "base64",
 			"default": true
+		},
+		{
+			"mimeType": "image/png"
+		},
+		{
+			"mimeType": "image/png",
+			"encoding": "base64"
 		}
 	]
 }

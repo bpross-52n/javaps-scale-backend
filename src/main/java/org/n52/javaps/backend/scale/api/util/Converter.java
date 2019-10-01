@@ -127,8 +127,20 @@ public class Converter {
         // TODO map JSON property that could be converted to input descriptions
         Set<TypedProcessInputDescription<?>> inputs =
                 convertToInputDescriptions(jobType.getInterface().getInputData());
+
+        if(inputs.contains(null)) {
+            LOGGER.info("Skipping scale job: " + jobType);
+            return null;
+        }
+
         Set<TypedProcessOutputDescription<?>> outputs =
                 convertToOutputDescriptions(jobType.getInterface().getOutputData());
+
+        if(outputs.contains(null)) {
+            LOGGER.info("Skipping scale job: " + jobType);
+            return null;
+        }
+
         return new ScaleJob(scaleService,
                 jobType.getId(),
                 createId(jobType),
@@ -264,7 +276,12 @@ public class Converter {
                             return new Format(m);
                         })
                         .collect(Collectors.toSet());
-                Format defaultFormat = supportedFormats.iterator().next();
+                Format defaultFormat = null;
+                try {
+                    defaultFormat = supportedFormats.iterator().next();
+                } catch (Exception e) {
+                    return null;
+                }
                 // FIXME switch to builder pattern
                 return new TypedComplexInputDescriptionImpl(id,
                         title, abstrakt, keywords, metadata, occurence, defaultFormat, supportedFormats,
@@ -299,9 +316,9 @@ public class Converter {
         //TODO: check switch statement
         switch (outputData.getClass().getSimpleName()) {
         case "OutputDatum":
-            
+
             Collection<Format> formatList = new ArrayList<Format>();
-            
+
             String mediaType = outputData.getMediaType();
             if (mediaType != null && !mediaType.isEmpty()) {
                 formatList.add(new Format(outputData.getMediaType()));
@@ -309,7 +326,7 @@ public class Converter {
             }
             formatList.add(new Format("application/octet-stream"));
             formatList.add(new Format("application/octet-stream", "base64"));
-            
+
             Set<Format> supportedFormats = new HashSet<Format>(formatList);
 //            Set<Format> supportedFormats = Collections.singleton(new Format(outputData.getMediaType()));
 
@@ -337,7 +354,7 @@ public class Converter {
                     new LiteralStringType());
         }
     }
-    
+
     public void convertJobResultsOutputsToProcessOutputs(List<JobResultOutputs> jobResultOutputs,
             HashMap<OwsCode, Data<?>> processOutputs) {
 
@@ -346,7 +363,7 @@ public class Converter {
             OwsCode id = new OwsCode(jobResultOutput.getName());
 
             String type = jobResultOutput.getType();
-            
+
             switch (type) {
             case "file":
                 Data<?> processOutput = convertJobResultFileOutputToProcessOutput(jobResultOutput);
@@ -362,7 +379,7 @@ public class Converter {
     }
 
     private Data<?> convertJobResultFileOutputToProcessOutput(JobResultOutputs jobResultOutput) {
-        
+
         String urlString = jobResultOutput.getValue().getUrl();
 
         URL url = null;
@@ -404,7 +421,7 @@ public class Converter {
             LOGGER.error("Exception while trying to create GenericFileDataBinding.", e.getMessage());
         }
         return null;
-        
+
     }
 
 }

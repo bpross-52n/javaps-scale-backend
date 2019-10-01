@@ -110,7 +110,7 @@ public class Job extends Task implements Serializable {
         this.ended = ended;
         return this;
     }
-    
+
     @JsonProperty("outputs")
     public List<JobResultOutputs> getOutputs() {
         return outputs;
@@ -151,16 +151,16 @@ public class Job extends Task implements Serializable {
                 .append(ended, rhs.ended)
                 .isEquals();
     }
-    
+
     public static class JobResultOutputs implements Serializable{
-        
+
         /**
-         * 
+         *
          */
         private static final long serialVersionUID = 254071250580261272L;
 
         public JobResultOutputs() {}
-        
+
         @JsonProperty("name")
         private String name;
 
@@ -173,7 +173,7 @@ public class Job extends Task implements Serializable {
         public void setName(String name) {
             this.name = name;
         }
-        
+
         @JsonProperty("type")
         private String type;
 
@@ -186,7 +186,7 @@ public class Job extends Task implements Serializable {
         public void setType(String type) {
             this.type = type;
         }
-        
+
         @JsonProperty("value")
         private Value value;
 
@@ -199,17 +199,17 @@ public class Job extends Task implements Serializable {
         public void setValue(Value value) {
             this.value = value;
         }
-        
+
     }
-    
+
     @JsonInclude(JsonInclude.Include.NON_NULL)
     public static class Value implements Serializable {
-        
+
         /**
-         * 
+         *
          */
         private static final long serialVersionUID = 1626367321684262748L;
-        
+
         @JsonProperty("data_type")
         private List<Object> dataType = null;
         @JsonProperty("is_deleted")
@@ -252,10 +252,10 @@ public class Job extends Task implements Serializable {
         private Object unpublished;
         @JsonProperty("superseded")
         private Object superseded;
-        
+
         @JsonProperty("meta_data")
         private MetaData metaData;
-        
+
         @JsonProperty("job_type")
         private JobType jobType;
         @JsonProperty("job")
@@ -330,7 +330,7 @@ public class Job extends Task implements Serializable {
         public void setBatch(Object batch) {
         this.batch = batch;
         }
-        
+
         @JsonProperty("meta_data")
         public MetaData getMetaData() {
         return metaData;
@@ -340,7 +340,7 @@ public class Job extends Task implements Serializable {
         public void setMetaData(MetaData metaData) {
         this.metaData = metaData;
         }
-        
+
         @JsonProperty("url")
         private String url;
 
@@ -353,7 +353,7 @@ public class Job extends Task implements Serializable {
         public void setUrl(String url) {
             this.url = url;
         }
-        
+
         @JsonProperty("id")
         private String id;
 
@@ -366,7 +366,7 @@ public class Job extends Task implements Serializable {
         public void setId(String id) {
             this.id = id;
         }
-        
+
         @JsonProperty("workspace")
         private Workspace workspace;
 
@@ -379,7 +379,7 @@ public class Job extends Task implements Serializable {
         public void setWorkspace(Workspace workspace) {
             this.workspace = workspace;
         }
-        
+
         @JsonProperty("file_name")
         private String fileName;
 
@@ -392,7 +392,7 @@ public class Job extends Task implements Serializable {
         public void setFileName(String fileName) {
             this.fileName = fileName;
         }
-        
+
         @JsonProperty("media_type")
         private String mediaType;
 
@@ -405,7 +405,7 @@ public class Job extends Task implements Serializable {
         public void setMediaType(String mediaType) {
             this.mediaType = mediaType;
         }
-        
+
         @JsonProperty("file_type")
         private String fileType;
 
@@ -417,8 +417,8 @@ public class Job extends Task implements Serializable {
         @JsonProperty("file_type")
         public void setFileType(String fileType) {
             this.fileType = fileType;
-        }       
-        
+        }
+
         @JsonProperty("file_size")
         private String fileSize;
 
@@ -431,7 +431,7 @@ public class Job extends Task implements Serializable {
         public void setFileSize(String fileSize) {
             this.fileSize = fileSize;
         }
-        
+
         @JsonProperty("data_type")
         public List<Object> getDataType() {
         return dataType;
@@ -642,14 +642,14 @@ public class Job extends Task implements Serializable {
         this.superseded = superseded;
         }
     }
-    
+
     public static class Workspace implements Serializable {
-        
+
         /**
-         * 
+         *
          */
         private static final long serialVersionUID = -5159461797092085139L;
-        
+
         @JsonProperty("id")
         private String id;
 
@@ -662,7 +662,7 @@ public class Job extends Task implements Serializable {
         public void setId(String id) {
             this.id = id;
         }
-        
+
         @JsonProperty("name")
         private String name;
 
@@ -675,16 +675,16 @@ public class Job extends Task implements Serializable {
         public void setName(String name) {
             this.name = name;
         }
-        
+
     }
-    
+
     public static class MetaData implements Serializable {
 
         /**
-         * 
+         *
          */
         private static final long serialVersionUID = 741974605014818859L;
-        
+
         @JsonIgnore
         private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
@@ -698,14 +698,14 @@ public class Job extends Task implements Serializable {
         this.additionalProperties.put(name, value);
         }
     }
-    
+
     public static class JobExe implements Serializable {
 
         /**
-         * 
+         *
          */
         private static final long serialVersionUID = -5261938152163955247L;
-        
+
         @JsonProperty("id")
         private Integer id;
 

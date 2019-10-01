@@ -113,15 +113,14 @@ public abstract class ScaleAlgorithm extends AbstractAlgorithm {
 
             if (result instanceof Job) {
                 LOGGER.info("Result is Job.");
-                
+
                 Job resultJob = (Job)result;
-                
+
                 List<JobResultOutputs> outputs = resultJob.getOutputs();
-                
+
                 ProcessOutputs processOutputs = context.getOutputs();
-                
-                scaleService.getConverter().convertJobResultsOutputsToProcessOutputs(outputs, processOutputs);                
-                
+
+                scaleService.getConverter().convertJobResultsOutputsToProcessOutputs(outputs, processOutputs);
             }
 
             // TODO continue development here
@@ -131,7 +130,7 @@ public abstract class ScaleAlgorithm extends AbstractAlgorithm {
             // Or
             // I have to download and then save in GenericFileDataBinding
             // and save in the context
-            
+
         } catch (IOException | ScaleAuthorizationFailedException e) {
             throw new ExecutionException(e);
         }
